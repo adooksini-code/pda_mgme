@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#008d36">
+  <title>재고 조회 · 맑은물에 PDA</title>
+  <link rel="stylesheet" href="./static/css/pda_common.css">
+  <link rel="stylesheet" href="./static/css/pda_component.css">
+  <link rel="stylesheet" href="./static/css/pda_content.css">
+  <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
+  <script src="./static/js/pda_scan.js" defer></script>
+  <script src="./static/js/pda_ui.js" defer></script>
+</head>
+<body data-page="S10-stock">
+
+<!-- 단말 화면 : 재고 조회 -->
+<div class="device">
+  <section class="ph" id="S10-stock">
+    <div class="hd"><a class="bk" href="home.html" aria-label="뒤로"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></a><h1>재고 조회</h1><span class="r">가나식품</span></div><div class="bd" style="gap:10px">
+<button type="button" class="scan" data-scan="route"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 7v10"/><path d="M12 7v10"/><path d="M17 7v10"/></svg><span>원자재 · 입고 라벨 바코드 스캔</span><span class="m">카메라</span></button>
+<div class="chips"><span>제품</span><span class="on">원자재</span><span>부자재</span></div>
+<div class="card"><div class="row"><span class="bdg">응고제</span><span class="t14">가나식품 · 규격 1.00</span></div><div class="t18">황산칼슘</div><div class="t14">스캔한 바코드 <span data-bind="code">8809876543213</span> · 샘플 데이터</div>
+<div class="row"><span class="t16b grow" style="color:#6d7683">전체 재고량</span><span class="n28">9,000</span></div>
+<div class="mini"><div><span class="t16b">3,000</span><span class="t14">창고 재고</span></div><div><span class="t16b" style="color:#006e2a">6,000</span><span class="t14">외부창고 재고</span></div><div><span class="t16b">9,000</span><span class="t14">전체 재고</span></div></div></div>
+<div class="row"><span class="t16b grow">창고 재고 · 위치별</span><span class="t16b" style="color:#008d36">3,000</span></div>
+<div class="list"><div class="li"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg><span class="grow"><span class="t16b" style="display:block">가나식품 냉장창고</span><span class="t14">LOT 261021</span></span><span class="t16b">2,000</span></div><div class="li"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg><span class="grow"><span class="t16b" style="display:block">가나식품 상온창고</span><span class="t14">LOT 261013</span></span><span class="t16b">1,000</span></div></div>
+<div class="row"><span class="t16b grow">외부창고 재고현황</span><span class="t16b" style="color:#008d36">6,000</span></div>
+<div class="t14">다른 법인 창고에 보관 중인 재고 · 법인 · 창고 · LOT별</div>
+<div class="list"><div class="li"><span class="grow"><span class="t16b" style="display:block">맑은물에</span><span class="t14">창고 맑은물에 · LOT 261021</span></span><span class="t16b">1,500</span></div><div class="li"><span class="grow"><span class="t16b" style="display:block">다라식품</span><span class="t14">창고 다라식품 · LOT 270727</span></span><span class="t16b">2,000</span></div><div class="li"><span class="grow"><span class="t16b" style="display:block">다라식품</span><span class="t14">창고 다라식품 · LOT 260727</span></span><span class="t16b">500</span></div><div class="li"><span class="grow"><span class="t16b" style="display:block">마바식품</span><span class="t14">창고 마바식품 · LOT 261013</span></span><span class="t16b">2,000</span></div></div>
+</div>
+  </section>
+
+  <!-- 카메라 스캔 레이어 (공통) -->
+  <div id="cam" class="cam" hidden>
+<div class="camtop"><span class="t16b" id="camTitle">바코드 스캔</span><button type="button" id="camClose" class="camx" aria-label="닫기">닫기</button></div>
+<div class="camview"><video id="camVideo" playsinline muted></video><div id="camLib"></div><div class="guide"><span></span></div><div class="camhint" id="camHint">바코드를 가이드 안에 맞춰주세요</div></div>
+<div class="cambottom">
+<div class="row"><input id="manIn" class="inp" placeholder="바코드 번호 직접 입력" autocomplete="off" style="flex:1"><button type="button" id="manGo" class="pill ok" style="min-height:52px">확인</button></div>
+<div class="t14">테스트 값 바로 넣기</div><div class="qks"><button type="button" class="qk" data-code="TS-20241127-0031">명세표</button><button type="button" class="qk" data-code="PK-20241127-01">피킹</button><button type="button" class="qk" data-code="PO12093719874">발주서</button><button type="button" class="qk" data-code="8809876543213">원자재</button><button type="button" class="qk" data-code="8801234560023">품목</button></div>
+</div></div>
+<div id="toast" class="toast" hidden></div>
+</div>
+<!-- //단말 화면 -->
+
+<!-- 프로토타입 보조 (실제 앱에서는 제외) -->
+<div class="chrome">
+  <button type="button" id="bMan">이 화면 설명서</button>
+  <button type="button" id="bNav">화면 목록</button>
+</div>
+<div class="modal" id="mMan" hidden>
+  <div class="mbox">
+    <div class="man"><div><div class="tag">10 · 재고</div><h2>재고 조회</h2></div><div class="steps"><div class="step"><div class="pic"><span class="no">1</span><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 7v10"/><path d="M12 7v10"/><path d="M17 7v10"/></svg></div><p><b>바코드 스캔</b>제품 · 원자재 · 부자재 공통</p></div><div class="step"><div class="pic"><span class="no">2</span><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></div><p><b>재고량 3가지</b>창고 재고 + 외부창고 재고 = 전체 재고</p></div><div class="step"><div class="pic"><span class="no">3</span><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></div><p><b>창고 재고 · 위치별</b>위치마다 수량 · LOT 표시</p></div><div class="step"><div class="pic"><span class="no">4</span><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg></div><p><b>외부창고 재고현황</b>다른 법인 창고에 있는 재고를 법인 · 창고 · LOT별로</p></div></div><div class="erp"><b><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>ERP 연동 · 재고정보 관리 › 원자재 재고현황</b>ERP 표기(법인, 카테고리, 규격, 창고 재고량, 외부창고 재고량, 전체 재고량)와 외부창고 재고현황 팝업(법인명, 창고명, LOT번호, 수량)을 그대로 따릅니다.</div></div>
+    <button type="button" class="mclose" data-close>닫기</button>
+  </div>
+</div>
+<div class="modal" id="mNav" hidden>
+  <div class="mbox">
+    <nav class="navlist" id="navlist" aria-label="화면 목록"></nav>
+    <button type="button" class="mclose" data-close>닫기</button>
+  </div>
+</div>
+
+</body>
+</html>

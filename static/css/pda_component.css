@@ -1,0 +1,49 @@
+@charset "UTF-8";
+/* ==================================================
+   맑은물에 PDA · 컴포넌트
+   헤더, 버튼, 카드, 목록, 입력, 배지, 스캔 바
+================================================== */
+.hd{height:56px;flex:none;background:#008d36;color:#fff;display:flex;align-items:center;gap:2px;padding:0 16px 0 4px}
+.bk{width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:8px}
+.bk:hover{background:#006e2a}
+.hd h1{margin:0;font-size:20px;font-weight:700;flex:1;min-width:0}
+.hd .r{font-size:16px}
+.btn{flex:1;min-height:56px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;background:#008d36;color:#fff;border:none;font-family:inherit;cursor:pointer;padding:0 8px;text-align:center}
+a.btn:hover{background:#006e2a;color:#fff}
+.btn.sec{background:#fff;color:#008d36;box-shadow:inset 0 0 0 2px #008d36}
+a.btn.sec:hover{background:#eaf5ee;color:#006e2a}
+.btn.dis{background:#d9dadc;color:#545557;cursor:default}
+.card{background:#fff;border:1px solid #e2e2e2;border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+a.card{color:#353d4a}
+a.card:hover{border-color:#008d36;color:#353d4a}
+.t20{font-size:20px;font-weight:700}
+.bdg{font-size:14px;padding:2px 8px;border-radius:12px;background:#eaf5ee;color:#006e2a;white-space:nowrap;font-weight:700}
+.bdg.w{background:#fff3e0;color:#9a4d00}
+.bdg.r{background:#ffecec;color:#c62828}
+.bdg.g{background:#f3f4f6;color:#545557}
+.scan{min-height:56px;box-sizing:border-box;border:2px solid #008d36;border-radius:8px;background:#fff;display:flex;align-items:center;gap:10px;padding:0 8px 0 14px;font-size:16px;color:#6d7683}
+.scan .m{white-space:nowrap;flex:none;margin-left:auto;font-size:14px;font-weight:700;color:#008d36;background:#eaf5ee;border-radius:6px;padding:6px 10px}
+.list{background:#fff;border:1px solid #e2e2e2;border-radius:10px;overflow:hidden;flex:none}
+.li{display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:1px solid #e2e2e2;min-height:48px;box-sizing:border-box;width:100%;background:#fff;font-family:inherit;color:#353d4a;text-align:left;border-left:none;border-right:none;border-bottom:none}
+.li:first-child{border-top:none}
+a.li:hover,button.li:hover{background:#f2f7f2;color:#353d4a}
+button.li{cursor:pointer;font-size:16px}
+.cat{font-size:13px;font-weight:700;padding:1px 6px;border-radius:4px;border:1px solid #008d36;color:#006e2a;white-space:nowrap;background:#fff}
+.chips{display:flex;gap:6px;overflow-x:auto;flex:none}
+.chips span{flex:none;padding:8px 14px;border-radius:20px;border:1px solid #d9dadc;background:#fff;font-size:15px;font-weight:700;color:#6d7683;white-space:nowrap}
+.chips span.on{background:#008d36;border-color:#008d36;color:#fff}
+.dash{min-height:44px;border:2px dashed #a7a8aa;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:15px;font-weight:700;color:#545557}
+.seg{display:flex;gap:4px;padding:4px;background:#fff;border:1px solid #e2e2e2;border-radius:8px;flex:none}
+.seg span{flex:1;text-align:center;padding:10px 0;border-radius:6px;font-size:15px;font-weight:700;color:#6d7683}
+.seg span.on{background:#008d36;color:#fff}
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld label{font-size:14px;color:#6d7683}
+.inp{min-height:52px;box-sizing:border-box;border:1px solid #d9dadc;border-radius:8px;background:#fff;padding:0 14px;font-size:16px;font-family:inherit;color:#353d4a;display:flex;align-items:center;gap:8px;width:100%}
+.mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.mini div{background:#f5f6fa;border-radius:8px;padding:6px 0;display:flex;flex-direction:column;align-items:center}
+.pill{min-height:44px;padding:0 12px;border-radius:6px;border:2px solid #d9dadc;background:#fff;color:#6d7683;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer}
+.pill.ok{background:#eaf5ee;border-color:#008d36;color:#006e2a}
+.pill.ng{background:#ffecec;border-color:#c62828;color:#c62828}
+.cb{width:24px;height:24px;flex:none;border-radius:5px;border:2px solid #a7a8aa;box-sizing:border-box;display:flex;align-items:center;justify-content:center;background:#fff}
+.cb.on{background:#008d36;border-color:#008d36}
+button.scan{width:100%;font-family:inherit;cursor:pointer;text-align:left}

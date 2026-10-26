@@ -1,0 +1,33 @@
+@charset "UTF-8";
+/* ==================================================
+   맑은물에 PDA · 공통 (폰트, 리셋, 레이아웃)
+   기준 해상도: Point Mobile PM67 · 360 × 640 (CSS px)
+================================================== */
+@font-face{font-family:'Pretendard';src:url(../font/Pretendard-Regular.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Pretendard';src:url(../font/Pretendard-Bold.woff2) format('woff2');font-weight:700;font-display:swap}
+:root{
+  --pda-brand:#008d36; --pda-brand-2:#006e2a; --pda-tint:#eaf5ee; --pda-tint-2:#f2f7f2;
+  --pda-ink:#353d4a; --pda-sub:#6d7683; --pda-line:#e2e2e2; --pda-bg:#f5f6fa;
+  --pda-warn:#9a4d00; --pda-warn-bg:#fff3e0; --pda-neg:#c62828; --pda-neg-bg:#ffecec;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px 0;background:#d9dcdf;font-family:'Pretendard','Malgun Gothic',sans-serif;color:var(--pda-ink)}
+a{color:var(--pda-brand);text-decoration:none}a:hover{color:var(--pda-brand-2)}
+button{font-family:inherit}
+[hidden]{display:none!important}
+
+/* 단말 화면 (360 × 640 고정, 가운데) */
+.device{width:360px;height:640px;flex:none;position:relative;overflow:hidden;background:var(--pda-bg);box-shadow:0 10px 40px rgba(0,0,0,.18)}
+.ph{width:360px;height:640px;display:flex;flex-direction:column;background:var(--pda-bg)}
+.bd{flex:1;min-height:0;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.ft{flex:none;background:#fff;border-top:1px solid var(--pda-line);padding:12px 16px;display:flex;gap:8px}
+.row{display:flex;align-items:center;gap:8px}.grow{flex:1;min-width:0}
+@media (max-width:400px){body{justify-content:flex-start;padding:0 0 16px}.device{box-shadow:none}}
+
+/* 타이포그래피 (PDA 기준: 본문 16 · 보조 14 · 제목 18/20 · 수량 28) */
+.t18{font-size:18px;font-weight:700}
+.t16{font-size:16px}
+.t16b{font-size:16px;font-weight:700}
+.t14{font-size:14px;color:#6d7683}
+.n28{font-size:28px;font-weight:700;color:#008d36}
