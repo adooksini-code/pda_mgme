@@ -38,7 +38,7 @@
 
 /* 프로토타입 보조 (단말 화면 밖) */
 .chrome{width:360px;display:flex;gap:8px}
-.chrome button,.chrome a{flex:1;height:44px;border-radius:8px;border:1px solid #a7a8aa;background:#fff;font:700 15px 'Pretendard',sans-serif;color:var(--pda-ink);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.chrome button,.chrome a{flex:1;min-width:0;height:44px;padding:0 4px;border-radius:8px;border:1px solid #a7a8aa;background:#fff;font:700 14px 'Pretendard',sans-serif;white-space:nowrap;color:var(--pda-ink);cursor:pointer;display:flex;align-items:center;justify-content:center}
 .modal{position:fixed;inset:0;background:rgba(17,17,17,.55);display:flex;align-items:center;justify-content:center;z-index:10;padding:16px;overflow:auto}
 .mbox{display:flex;flex-direction:column;gap:10px;align-items:stretch;max-height:100%}
 .mclose{height:48px;border-radius:8px;border:none;background:var(--pda-brand);color:#fff;font:700 16px 'Pretendard',sans-serif;cursor:pointer}
