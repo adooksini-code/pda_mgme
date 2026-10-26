@@ -65,10 +65,16 @@
   // ---------- 카메라 ----------
   var stream = null, detector = null, timer = null, lib = null, last = '', lastAt = 0;
   var video, cam;
-  function hint(t) { $('#camHint').textContent = t; }
+  function hint(t) {
+    // 사원증 스캔에는 직접 입력칸이 없으므로 안내 문구를 바꿈
+    if (ctx === 'emp') t = t.replace(/(아래에 )?번호를 직접 입력하세요\./, '아이디 · 비밀번호로 로그인하세요.');
+    $('#camHint').textContent = t;
+  }
   function open(c) {
     ctx = c || 'route';
     $('#camTitle').textContent = ctx === 'emp' ? '사원증 스캔' : ctx === 'lot' ? '업체 LOT 스캔' : ctx === 'item' ? '품목 바코드 스캔' : '바코드 스캔';
+    // 사원증 스캔은 카메라만 사용 (직접 입력 · 테스트 값 영역 숨김)
+    $('.cambottom').hidden = ctx === 'emp';
     cam.hidden = false; $('#manIn').value = ''; start();
   }
   function close() { stop(); cam.hidden = true; }
