@@ -48,6 +48,11 @@
   function handle(raw) {
     var code = String(raw || '').trim(); if (!code) return;
     var u = code.toUpperCase();
+    if (ctx === 'emp') {
+      if (u.indexOf('EMP-') === 0) { beep(true); goPage('home.html', code, 'emp', '사원 ' + code + ' 로그인'); }
+      else { beep(false); ui().toast('사원증 바코드가 아닙니다: ' + code, 'err'); }
+      return;
+    }
     if (ctx === 'lot') { ui().bind('lot', code); beep(true); ui().toast('업체 LOT 입력: ' + code, 'ok'); return; }
     if (window.PdaOutbound && window.PdaOutbound.check(code)) { beep(true); return; }
     if (ctx === 'item') { beep(false); ui().toast('이 명세표에 없는 품목입니다: ' + code, 'err'); return; }
@@ -63,10 +68,19 @@
   function hint(t) { $('#camHint').textContent = t; }
   function open(c) {
     ctx = c || 'route';
-    $('#camTitle').textContent = ctx === 'lot' ? '업체 LOT 스캔' : ctx === 'item' ? '품목 바코드 스캔' : '바코드 스캔';
+    $('#camTitle').textContent = ctx === 'emp' ? '사원증 스캔' : ctx === 'lot' ? '업체 LOT 스캔' : ctx === 'item' ? '품목 바코드 스캔' : '바코드 스캔';
     cam.hidden = false; $('#manIn').value = ''; start();
   }
   function close() { stop(); cam.hidden = true; }
+  // 취소/닫기 : 메인(home.html)으로 이동
+  //  - 로그인 화면(사원증 스캔), 화면 안 입력칸 스캔(LOT · 품목)은 현재 화면 유지
+  //  - 이미 메인이면 닫기만
+  function cancel() {
+    var keep = ctx === 'emp' || ctx === 'lot' || ctx === 'item';
+    var page = location.pathname.split('/').pop();
+    close();
+    if (!keep && page !== 'home.html') location.href = 'home.html';
+  }
   function got(code) {
     var now = Date.now(); if (code === last && now - lastAt < 1500) return;
     last = code; lastAt = now;
@@ -128,12 +142,12 @@
     $$('[data-scan]').forEach(function (b) {
       b.addEventListener('click', function (e) { e.preventDefault(); open(b.getAttribute('data-scan')); });
     });
-    $('#camClose').onclick = close;
+    $('#camClose').onclick = cancel;
     var manual = function () { var v = $('#manIn').value; if (v.trim()) got(v); };
     $('#manGo').onclick = manual;
     $('#manIn').addEventListener('keydown', function (e) { if (e.key === 'Enter') manual(); });
     $$('.qk').forEach(function (b) { b.onclick = function () { got(b.getAttribute('data-code')); }; });
   });
 
-  window.PdaScan = { open: open, close: close, handle: handle, beep: beep };
+  window.PdaScan = { open: open, close: close, cancel: cancel, handle: handle, beep: beep };
 })();

@@ -24,7 +24,7 @@
 <div class="fld"><label for="p">비밀번호</label><input id="p" class="inp" type="password" value="password"></div>
 <label class="row t16" for="a"><input id="a" type="checkbox" checked style="width:22px;height:22px;accent-color:#008d36"> 자동 로그인</label>
 <a class="btn" href="home.html" style="flex:none;min-height:52px">로그인</a>
-<a class="btn sec" href="home.html" style="flex:none;min-height:44px;font-size:16px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 10h2"/><path d="M16 14h2"/><path d="M6.17 15a3 3 0 0 1 5.66 0"/><circle cx="9" cy="11" r="2"/><rect x="2" y="5" width="20" height="14" rx="2"/></svg>&nbsp;사원증 바코드로 로그인</a>
+<button type="button" class="btn sec" data-scan="emp" style="flex:none;min-height:44px;font-size:16px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 10h2"/><path d="M16 14h2"/><path d="M6.17 15a3 3 0 0 1 5.66 0"/><circle cx="9" cy="11" r="2"/><rect x="2" y="5" width="20" height="14" rx="2"/></svg>&nbsp;사원증 바코드로 로그인</button>
 </div>
   </section>
 
@@ -34,7 +34,7 @@
 <div class="camview"><video id="camVideo" playsinline muted></video><div id="camLib"></div><div class="guide"><span></span></div><div class="camhint" id="camHint">바코드를 가이드 안에 맞춰주세요</div></div>
 <div class="cambottom">
 <div class="row"><input id="manIn" class="inp" placeholder="바코드 번호 직접 입력" autocomplete="off" style="flex:1"><button type="button" id="manGo" class="pill ok" style="min-height:52px">확인</button></div>
-<div class="t14">테스트 값 바로 넣기</div><div class="qks"><button type="button" class="qk" data-code="TS-20241127-0031">명세표</button><button type="button" class="qk" data-code="PK-20241127-01">피킹</button><button type="button" class="qk" data-code="PO12093719874">발주서</button><button type="button" class="qk" data-code="8809876543213">원자재</button><button type="button" class="qk" data-code="8801234560023">품목</button></div>
+<div class="t14">테스트 값 바로 넣기</div><div class="qks"><button type="button" class="qk" data-code="TS-20241127-0031">명세표</button><button type="button" class="qk" data-code="PK-20241127-01">피킹</button><button type="button" class="qk" data-code="PO12093719874">발주서</button><button type="button" class="qk" data-code="8809876543213">원자재</button><button type="button" class="qk" data-code="8801234560023">품목</button><button type="button" class="qk" data-code="EMP-0001">사원증</button></div>
 </div></div>
 <div id="toast" class="toast" hidden></div>
 </div>
