@@ -149,7 +149,7 @@
 
 /* ---------- 홈 화면 앱으로 실행 중 : 화면 꽉 채우기 ---------- */
 .is-app body{padding:0;justify-content:flex-start;background:var(--c-canvas)}
-.is-app .device{width:100vw;height:100vh;height:100dvh;box-shadow:none}
+.is-app .device{width:100vw;height:100vh;height:var(--app-h,100vh);box-shadow:none}
 .is-app .chrome{display:none}
 
 /* ---------- 확인용 보조 UI (실제 앱에서는 제외) ---------- */

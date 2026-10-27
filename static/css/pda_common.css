@@ -65,5 +65,5 @@ img{display:block;max-width:100%}
 @keyframes ph-in{from{opacity:.4}to{opacity:1}}
 
 /* 휴대폰 · PDA 브라우저 : 화면 폭을 꽉 채우고, 보이는 높이에 맞춤 (상태바 · 주소창 제외) */
-@media (max-width:480px){body{justify-content:flex-start;padding:0 0 16px;background:var(--c-canvas)}.device{width:100%;height:min(640px,100vh);height:min(640px,100dvh);box-shadow:none}}
+@media (max-width:480px){body{justify-content:flex-start;padding:0 0 16px;background:var(--c-canvas)}.device{width:100%;height:min(640px,100vh);height:min(640px,var(--app-h,100vh));box-shadow:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

@@ -6,6 +6,14 @@
   'use strict';
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  /* ---------- 실제로 보이는 화면 높이 ----------
+     오래된 크롬(PDA 등)은 100vh 에 주소창 높이까지 포함해 화면 아래가 가려지므로,
+     보이는 높이(innerHeight)를 직접 재서 --app-h 로 씁니다. */
+  function setAppH() { document.documentElement.style.setProperty('--app-h', window.innerHeight + 'px'); }
+  setAppH();
+  window.addEventListener('resize', setAppH);
+  window.addEventListener('orientationchange', function () { setTimeout(setAppH, 200); });
+
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function fmt(n) { return Number(n || 0).toLocaleString('ko-KR'); }
   function device() { return $('.device') || document.body; }
