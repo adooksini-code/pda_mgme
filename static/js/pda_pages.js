@@ -164,7 +164,8 @@
       U.busy('저장 중', null, 350).then(function () { location.href = r.quality ? 'inbound_quality.html' : 'inbound_done.html'; });
     };
     window.PdaPage = { onScan: function (code, ctx) {
-      if (ctx !== 'lot') return false;
+      var known = /^(TS-|PK-|PO|VH-|IN-|EMP-)/i.test(code) || /^\d{8,14}$/.test(code);
+      if (ctx !== 'lot' && known) return false;
       window.PdaScan.beep(true); setLot(code); U.toast('업체 LOT ' + code + ' 입력', 'ok'); return true;
     } };
   };

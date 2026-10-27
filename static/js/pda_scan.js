@@ -138,17 +138,51 @@
     if (lib) { var l = lib; lib = null; l.stop().then(function () { l.clear(); }).catch(function () {}); }
   }
 
-  /* ---------- PDA 하드웨어 스캐너 (키보드 입력 + Enter) ---------- */
-  var buf = '', bufAt = 0;
+  /* ---------- PDA 하드웨어 스캐너 (물리 SCAN 버튼) ----------
+     스캐너가 '키보드 입력'으로 보내는 값을 어느 화면에서든 받습니다.
+     - 키 이벤트 방식 : keydown 으로 한 글자씩 수신
+     - 텍스트 입력 방식 : 화면에 보이지 않는 입력칸(키패드 안 뜸)으로 수신
+     - 끝에 Enter 가 없어도 입력이 멈추면 바로 처리 */
+  var sink = null, sinkTimer = null, buf = '', bufAt = 0;
+  function isField(el) { return el && el !== sink && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.isContentEditable); }
+  function deliver(c) { c = String(c).replace(/[\r\n\t]/g, '').trim(); if (c.length < 4) return; if (cam && !cam.hidden) got(c); else handle(c, 'route'); }
+  function flushSink() {
+    clearTimeout(sinkTimer);
+    // 포커스가 넘어오는 사이에 키 이벤트로 먼저 들어온 글자가 있으면 앞에 붙임
+    var head = (Date.now() - bufAt < 400) ? buf : ''; buf = '';
+    var v = head + sink.value; sink.value = ''; deliver(v);
+  }
+  function focusSink() {
+    if (!sink || document.hidden) return;
+    var a = document.activeElement; if (isField(a) || a === sink) return;
+    try { sink.focus({ preventScroll: true }); } catch (e) { sink.focus(); }
+  }
   document.addEventListener('keydown', function (e) {
-    var tg = e.target; if (tg && (tg.tagName === 'INPUT' || tg.tagName === 'TEXTAREA')) return;
-    var now = Date.now(); if (now - bufAt > 80) buf = ''; bufAt = now;
-    if (e.key === 'Enter') { if (buf.length >= 4) { var c = buf; buf = ''; if (cam && !cam.hidden) got(c); else handle(c, 'route'); e.preventDefault(); } return; }
-    if (e.key.length === 1) buf += e.key;
+    if (e.target === sink) { if (e.key === 'Enter' || e.key === 'Tab') { e.preventDefault(); flushSink(); } return; }
+    if (isField(e.target)) return;
+    var now = Date.now(); if (now - bufAt > 120) buf = ''; bufAt = now;
+    if (e.key === 'Enter' || e.key === 'Tab') { if (buf.length >= 4) { var c = buf; buf = ''; deliver(c); e.preventDefault(); } return; }
+    if (e.key && e.key.length === 1) buf += e.key;
   });
+  function initSink() {
+    sink = document.createElement('input');
+    sink.type = 'text'; sink.id = 'pdaScanSink';
+    sink.setAttribute('inputmode', 'none');           // 가상 키패드가 뜨지 않음
+    sink.setAttribute('autocomplete', 'off'); sink.setAttribute('autocapitalize', 'off'); sink.setAttribute('spellcheck', 'false');
+    sink.setAttribute('aria-hidden', 'true'); sink.tabIndex = -1;
+    sink.className = 'scan-sink';
+    document.body.appendChild(sink);
+    sink.addEventListener('input', function () { clearTimeout(sinkTimer); sinkTimer = setTimeout(flushSink, 150); });
+    focusSink();
+    document.addEventListener('click', function () { setTimeout(focusSink, 0); });
+    document.addEventListener('focusout', function (e) { if (isField(e.target)) setTimeout(focusSink, 60); });
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) setTimeout(focusSink, 60); });
+    window.addEventListener('focus', function () { setTimeout(focusSink, 60); });
+  }
 
   /* ---------- 연결 ---------- */
   document.addEventListener('DOMContentLoaded', function () {
+    initSink();
     cam = $('#cam'); video = $('#camVideo'); if (!cam) return;
     document.addEventListener('click', function (e) {
       var b = e.target.closest('[data-scan]'); if (!b) return;

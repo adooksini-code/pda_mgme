@@ -161,19 +161,22 @@
   function checkUpdate() {
     if (location.protocol === 'file:') return;
     fetch('version.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (srv) {
-      if (!srv || !srv.version || (srv.version === V.version && srv.build === V.build)) return;
+      var id = srv.version + '|' + srv.build;
+      if (!srv.version || (srv.version === V.version && srv.build === V.build)) { try { localStorage.removeItem('pda_ver_ack'); } catch (e) {} return; }
+      // 이미 업데이트를 눌렀거나(이 기기), 이번 사용 중 '나중에'를 고른 버전이면 다시 묻지 않음
+      try { if (localStorage.getItem('pda_ver_ack') === id || sessionStorage.getItem('pda_ver_later') === id) return; } catch (e) {}
       sheet({ title: '새 버전이 있습니다', html: '<p class="item__sub" style="padding:0 20px 8px">설치된 버전 ' + esc(V.version) + ' → 새 버전 ' + esc(srv.version) + '</p>',
         items: [{ label: '지금 업데이트', sub: '앱을 다시 불러옵니다', icon: 'sync', value: 'go' }], foot: '나중에' }).then(function (v) {
-        if (v !== 'go') return;
-        loading('업데이트 중', '새 버전 ' + srv.version, 300).then(function () {
-          var done = function () { location.reload(); };
-          if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) {
-            navigator.serviceWorker.getRegistration().then(function (reg) {
-              if (!reg) return done();
-              caches.keys().then(function (k) { return Promise.all(k.map(function (x) { return caches.delete(x); })); })
-                .then(function () { return reg.update(); }).then(done, done);
-            });
-          } else done();
+        if (v !== 'go') { try { sessionStorage.setItem('pda_ver_later', id); } catch (e) {} return; }
+        try { localStorage.setItem('pda_ver_ack', id); } catch (e) {}
+        loading('업데이트 중', '새 버전 ' + srv.version, 200).then(function () {
+          var fired = false, done = function () { if (fired) return; fired = true; location.reload(); };
+          if (!('serviceWorker' in navigator)) return done();
+          navigator.serviceWorker.addEventListener('controllerchange', done);   // 새 버전이 적용되면 다시 불러오기
+          setTimeout(done, 4000);
+          caches.keys().then(function (k) { return Promise.all(k.map(function (x) { return caches.delete(x); })); })
+            .then(function () { return navigator.serviceWorker.getRegistration(); })
+            .then(function (reg) { return reg ? reg.update() : done(); }).catch(done);
         });
       });
     }).catch(function () {});

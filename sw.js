@@ -4,7 +4,7 @@
    - 화면(HTML)은 네트워크 우선, 그 밖의 파일은 저장본 우선입니다.
    - 파일을 바꾸면 VERSION 값을 올려 주세요.
 ================================================== */
-var VERSION = 'pda-1.0.3-202610271108';
+var VERSION = 'pda-1.0.4-202610271115';
 var FILES = [
   './', './index.html', './login.html', './home.html', './inbound_list.html', './inbound_reg.html', './inbound_quality.html', './inbound_done.html',
   './outbound_picking.html', './outbound_check.html', './print.html', './stock.html', './test_barcodes.html', './manifest.webmanifest',
@@ -17,7 +17,7 @@ var CDN = 'https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js';
 
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(VERSION).then(function (c) {
-    return c.addAll(FILES).then(function () { return c.add(new Request(CDN, { mode: 'cors' })).catch(function () {}); });
+    return c.addAll(FILES.map(function (f) { return new Request(f, { cache: 'reload' }); })).then(function () { return c.add(new Request(CDN, { mode: 'cors' })).catch(function () {}); });
   }).then(function () { return self.skipWaiting(); }));
 });
 self.addEventListener('activate', function (e) {
@@ -33,7 +33,7 @@ self.addEventListener('fetch', function (e) {
   if (url.pathname.endsWith('/version.json')) return; // 최신 버전 확인은 항상 서버에서
   if (req.mode === 'navigate') {
     // 화면: 네트워크 우선 → 실패하면 저장본 (주소 뒤 ?code= 같은 값은 무시하고 찾기)
-    e.respondWith(fetch(req).then(function (res) {
+    e.respondWith(fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' }).then(function (res) {
       var copy = res.clone(); caches.open(VERSION).then(function (c) { c.put(url.pathname, copy); }); return res;
     }).catch(function () {
       return caches.match(req, { ignoreSearch: true }).then(function (r) { return r || caches.match('./login.html'); });
@@ -42,7 +42,7 @@ self.addEventListener('fetch', function (e) {
   }
   // 그 밖의 파일: 저장본 우선
   e.respondWith(caches.match(req, { ignoreSearch: true }).then(function (r) {
-    return r || fetch(req).then(function (res) {
+    return r || fetch(url.origin === location.origin ? new Request(req.url, { cache: 'no-cache' }) : req).then(function (res) {
       if (res.ok) { var copy = res.clone(); caches.open(VERSION).then(function (c) { c.put(req, copy); }); }
       return res;
     });
