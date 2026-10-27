@@ -380,7 +380,7 @@
       $('#whMeta').innerHTML = '<b>' + fmt(wh) + '</b>';
       $('#exMeta').innerHTML = '<b>' + fmt(ex) + '</b>';
       $('#whList').innerHTML = s.locs.map(function (l) { return '<div class="item"><span class="item__lead">' + icon('pin') + '</span><span class="item__body"><span class="item__title"><span>' + esc(l.name) + '</span></span><span class="item__sub num">LOT ' + esc(l.lot) + '</span></span><span class="item__end num">' + fmt(l.qty) + '</span></div>'; }).join('');
-      $('#exList').innerHTML = s.ext.length ? s.ext.map(function (l) { return '<div class="item"><span class="item__body"><span class="item__title"><span>' + esc(l.corp) + '</span></span><span class="item__sub num meta">' + meta([l.wh + ' 창고', 'LOT ' + l.lot]) + '</span></span><span class="item__end num">' + fmt(l.qty) + '</span></div>'; }).join('')
+      $('#exList').innerHTML = s.ext.length ? s.ext.map(function (l) { return '<div class="item"><span class="item__lead">' + icon('pin') + '</span><span class="item__body"><span class="item__title"><span>' + esc(l.corp + ' ' + l.wh) + '</span></span><span class="item__sub num">LOT ' + esc(l.lot) + '</span></span><span class="item__end num">' + fmt(l.qty) + '</span></div>'; }).join('')
         : '<div class="item"><span class="item__body"><span class="item__sub">홀딩스에 보관 중인 재고가 없습니다</span></span></div>';
       $('#stMain').scrollTop = 0;
     }
