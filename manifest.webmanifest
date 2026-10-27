@@ -1,0 +1,23 @@
+{
+  "name": "맑은물에 입출고 PDA",
+  "short_name": "맑은물에 PDA",
+  "description": "바코드 스캔으로 입고, 출고, 재고를 처리하는 맑은물에 입출고 앱 (시연용)",
+  "lang": "ko",
+  "id": "./",
+  "start_url": "./login.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#008d36",
+  "icons": [
+    { "src": "./static/img/pwa/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./static/img/pwa/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./static/img/pwa/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "바코드 스캔", "url": "./home.html?scan=1", "icons": [{ "src": "./static/img/pwa/icon-192.png", "sizes": "192x192" }] },
+    { "name": "출고 · 피킹리스트", "url": "./outbound_picking.html" },
+    { "name": "재고 조회", "url": "./stock.html" }
+  ]
+}

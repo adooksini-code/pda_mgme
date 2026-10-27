@@ -142,6 +142,15 @@
 .man__erp b{display:flex;align-items:center;gap:6px;color:var(--c-ink);font-size:14px;margin-bottom:4px}
 .man__erp .ic{width:16px;height:16px;color:var(--c-brand)}
 
+/* ---------- 앱 설치 안내 ---------- */
+.install-guide{list-style:decimal;padding:0 20px 8px 40px;display:flex;flex-direction:column;gap:8px;font-size:15px;color:#4d5560}
+.install-guide b{color:var(--c-ink)}
+
+/* ---------- 홈 화면 앱으로 실행 중 : 화면 꽉 채우기 ---------- */
+.is-app body{padding:0;justify-content:flex-start;background:var(--c-canvas)}
+.is-app .device{width:100vw;height:100vh;height:100dvh;box-shadow:none}
+.is-app .chrome{display:none}
+
 /* ---------- 확인용 보조 UI (실제 앱에서는 제외) ---------- */
 .chrome{width:360px;display:flex;gap:8px}
 .chrome > *{flex:1;min-width:0;height:44px;padding:0 4px;border-radius:8px;border:1px solid #a7adb4;background:#fff;font-size:14px;font-weight:700;color:var(--c-ink);display:flex;align-items:center;justify-content:center;white-space:nowrap}

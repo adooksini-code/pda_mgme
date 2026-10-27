@@ -136,12 +136,31 @@
     document.addEventListener('click', function (e) { if (e.target.closest('[data-reset]')) { e.preventDefault(); window.PdaStore.reset(); go('home.html', '시연 데이터를 처음 상태로 돌렸습니다'); } });
   }
 
+  /* ---------- 홈 화면 앱 (PWA) ---------- */
+  var installEvt = null;
+  var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  if (standalone) document.documentElement.classList.add('is-app');
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    window.addEventListener('load', function () { navigator.serviceWorker.register('./sw.js').catch(function () {}); });
+  }
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault(); installEvt = e;
+    $$('[data-install]').forEach(function (b) { b.hidden = false; });
+  });
+  window.addEventListener('appinstalled', function () { installEvt = null; $$('[data-install]').forEach(function (b) { b.hidden = true; }); toast('홈 화면에 앱을 설치했습니다', 'ok'); });
+  function install() {
+    if (installEvt) { installEvt.prompt(); installEvt.userChoice.then(function () { installEvt = null; }); return; }
+    if (standalone) { toast('이미 앱으로 실행 중입니다'); return; }
+    sheet({ title: '홈 화면에 추가하기', html: '<ol class="install-guide"><li><b>안드로이드 크롬</b> 오른쪽 위 메뉴(⋮)에서 "홈 화면에 추가" 또는 "앱 설치"</li><li><b>아이폰 사파리</b> 아래 공유 버튼에서 "홈 화면에 추가"</li></ol>' });
+  }
+  document.addEventListener('click', function (e) { if (e.target.closest('[data-install]')) install(); });
+
   /* ---------- 시작 ---------- */
   document.addEventListener('DOMContentLoaded', function () {
     initTabs(); initSteppers(); initPw(); initChrome();
     try { var m = sessionStorage.getItem('pda_toast'); if (m) { sessionStorage.removeItem('pda_toast'); m = JSON.parse(m); setTimeout(function () { toast(m.text, m.kind); }, 120); } } catch (e) {}
   });
 
-  window.PdaUI = { $: $, $$: $$, esc: esc, fmt: fmt, icon: icon, toast: toast, loading: loading, busy: busy, go: go, sheet: sheet,
+  window.PdaUI = { $: $, $$: $$, esc: esc, fmt: fmt, icon: icon, toast: toast, loading: loading, busy: busy, go: go, sheet: sheet, install: install, standalone: standalone,
     initTabs: initTabs, initSteppers: initSteppers, selectTab: selectValue, params: new URLSearchParams(location.search) };
 })();

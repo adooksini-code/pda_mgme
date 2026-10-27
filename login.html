@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#008d36">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="맑은물에 PDA">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="./static/img/pwa/favicon-32.png">
+  <link rel="apple-touch-icon" href="./static/img/pwa/apple-touch-icon.png">
   <title>로그인 | 맑은물에 PDA</title>
   <link rel="stylesheet" href="./static/css/pda_common.css">
   <link rel="stylesheet" href="./static/css/pda_component.css">
@@ -46,6 +52,7 @@
         <button type="submit" class="btn">로그인</button>
       </form>
       <button type="button" class="btn btn--line btn--sm" data-scan="emp"><svg class="ic" aria-hidden="true"><use href="#i-idcard"/></svg>사원증 바코드로 로그인</button>
+      <button type="button" class="btn btn--quiet btn--sm" data-install hidden><svg class="ic ic--s" aria-hidden="true"><use href="#i-home"/></svg>홈 화면에 앱 설치</button>
       <p class="login__ver">버전 1.0.0</p>
     </div>
   </section>

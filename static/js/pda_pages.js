@@ -50,10 +50,17 @@
     $('[data-kpi="inWait"]').textContent = c.inWait;
     $('[data-kpi="outWait"]').textContent = c.outWait;
     $('[data-kpi="outDone"]').textContent = c.outDone;
+    if (U.params.get('scan') === '1') setTimeout(function () { window.PdaScan.open('route'); }, 300);
     $$('[data-demo-scan]').forEach(function (b) { b.onclick = function () { window.PdaScan.handle(b.getAttribute('data-demo-scan'), 'route'); }; });
     $('#userBtn').onclick = function () {
       U.sheet({ title: D.user.name + ' (' + D.user.id + ')', html: '<p class="item__sub" style="padding:0 20px 8px">' + esc(D.user.corp) + ' 업체코드 ' + esc(D.user.corpCode) + '</p>',
-        items: [{ label: '로그아웃', icon: 'logout', value: 'logout' }] }).then(function (v) { if (v === 'logout') U.busy('로그아웃 중', null, 400).then(function () { location.href = 'login.html'; }); });
+        items: [{ label: '화면 목록', icon: 'list', value: 'nav' }, { label: '시연 데이터 초기화', icon: 'sync', value: 'reset' },
+          { label: U.standalone ? '앱으로 실행 중' : '홈 화면에 앱 설치', icon: 'home', value: 'install' }, { label: '로그아웃', icon: 'logout', value: 'logout' }] }).then(function (v) {
+        if (v === 'logout') U.busy('로그아웃 중', null, 400).then(function () { location.href = 'login.html'; });
+        else if (v === 'nav') $('#mNav').hidden = false;
+        else if (v === 'reset') { S.reset(); U.go('home.html', '시연 데이터를 처음 상태로 돌렸습니다'); }
+        else if (v === 'install') U.install();
+      });
     };
   };
 
