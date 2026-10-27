@@ -59,8 +59,9 @@
 .kpi__item--wait .kpi__value{color:var(--c-amber)}
 .kpi__item--done .kpi__value{color:var(--c-brand-deep)}
 .menu{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.menu__item{display:flex;align-items:center;gap:12px;min-height:64px;padding:0 14px;border-radius:var(--r-l);background:var(--c-surface);font-size:17px;font-weight:700}
-.menu__item .ic{color:var(--c-brand)}
+/* 업무 메뉴 : 큰 타일 (PDA 첫 화면에서 스캔 시연 영역은 스크롤해야 보이도록) */
+.menu__item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:116px;padding:0 14px;border-radius:var(--r-l);background:var(--c-surface);font-size:18px;font-weight:700}
+.menu__item .ic{color:var(--c-brand);width:34px;height:34px}
 .menu__item:active{background:var(--c-mint)}
 
 /* ---------- 결과 화면 ---------- */
