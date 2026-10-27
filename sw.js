@@ -4,7 +4,7 @@
    - 화면(HTML)은 네트워크 우선, 그 밖의 파일은 저장본 우선입니다.
    - 파일을 바꾸면 VERSION 값을 올려 주세요.
 ================================================== */
-var VERSION = 'pda-1.0.9-202610271148';
+var VERSION = 'pda-1.0.10-202610271203';
 var FILES = [
   './', './index.html', './login.html', './home.html', './inbound_list.html', './inbound_reg.html', './inbound_quality.html', './inbound_done.html',
   './outbound_picking.html', './outbound_check.html', './print.html', './stock.html', './test_barcodes.html', './manifest.webmanifest',
