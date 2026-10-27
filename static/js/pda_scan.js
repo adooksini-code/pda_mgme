@@ -107,10 +107,29 @@
     }
     hint('스캔 기능을 불러오지 못했습니다. 번호를 직접 입력하세요.');
   }
+  // 화면에 바코드가 여러 개 잡히면 초록 상자(가운데)에 가장 가까운 것만 읽고,
+  // 같은 값이 연속 2번 읽혀야 확정합니다. (옆 바코드를 잘못 읽는 것 방지)
+  var pending = '';
+  function pickCenter(list) {
+    var vw = video.videoWidth || 1, vh = video.videoHeight || 1, best = null, bestD = Infinity;
+    list.forEach(function (c) {
+      var b = c.boundingBox; if (!b) return;
+      var dx = (b.x + b.width / 2) - vw / 2, dy = (b.y + b.height / 2) - vh / 2;
+      if (Math.abs(dx) > vw * 0.38 || Math.abs(dy) > vh * 0.22) return; // 가운데 영역 밖은 무시
+      var d = dx * dx + dy * dy; if (d < bestD) { bestD = d; best = c; }
+    });
+    return best;
+  }
   function loop() {
     if (!detector || !stream) return;
-    detector.detect(video).then(function (r) { if (r && r.length) got(r[0].rawValue); else timer = setTimeout(loop, 120); })
-      .catch(function () { timer = setTimeout(loop, 250); });
+    detector.detect(video).then(function (r) {
+      var c = r && r.length ? pickCenter(r) : null;
+      if (c) {
+        if (c.rawValue === pending) { pending = ''; got(c.rawValue); return; }
+        pending = c.rawValue; timer = setTimeout(loop, 60); return;
+      }
+      pending = ''; timer = setTimeout(loop, 120);
+    }).catch(function () { timer = setTimeout(loop, 250); });
   }
   function stop() {
     clearTimeout(timer); timer = null; detector = null;

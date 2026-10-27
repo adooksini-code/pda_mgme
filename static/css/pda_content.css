@@ -163,3 +163,15 @@
 .navlist a{display:flex;justify-content:space-between;padding:12px;border-radius:8px;font-size:16px;font-weight:700}
 .navlist a em{font-style:normal;font-weight:400;font-size:13px;color:var(--c-ink-2)}
 .navlist a:active,.navlist a.is-current{background:var(--c-mint);color:var(--c-brand-deep)}
+
+/* ---------- 세로가 짧은 화면 (PDA 브라우저 · 상태바 포함) ---------- */
+@media (max-height:620px){
+  .login{padding:16px 24px 12px;gap:10px}
+  .login__brand{gap:2px;padding-bottom:2px}
+  .login__brand img{width:112px;height:auto}
+  .login__form{gap:8px}
+  .login .input{min-height:46px}
+  .login .input-wrap__btn{width:44px;height:42px}
+  .login .checkline{min-height:36px}
+  .login__form .btn{min-height:48px}
+}
