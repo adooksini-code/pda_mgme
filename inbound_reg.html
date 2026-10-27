@@ -4,59 +4,122 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#008d36">
-  <title>원자재입고 등록 · 맑은물에 PDA</title>
+  <title>입고 등록 | 맑은물에 PDA</title>
   <link rel="stylesheet" href="./static/css/pda_common.css">
   <link rel="stylesheet" href="./static/css/pda_component.css">
   <link rel="stylesheet" href="./static/css/pda_content.css">
   <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
-  <script src="./static/js/pda_scan.js" defer></script>
+  <script src="./static/js/pda_data.js" defer></script>
   <script src="./static/js/pda_ui.js" defer></script>
+  <script src="./static/js/pda_scan.js" defer></script>
+  <script src="./static/js/pda_pages.js" defer></script>
 </head>
-<body data-page="S04-inbound-reg">
+<body data-page="inbound_reg">
+<svg class="sprite" aria-hidden="true" focusable="false"><symbol id="i-scan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 7v10"/><path d="M12 7v10"/><path d="M17 7v10"/></symbol><symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></symbol><symbol id="i-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol><symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol><symbol id="i-inbox" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol><symbol id="i-outbox" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></symbol><symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></symbol><symbol id="i-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></symbol><symbol id="i-truck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></symbol><symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="i-checkc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol><symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol><symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></symbol><symbol id="i-minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></symbol><symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></symbol><symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol><symbol id="i-idcard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 10h2"/><path d="M16 14h2"/><path d="M6.17 15a3 3 0 0 1 5.66 0"/><circle cx="9" cy="11" r="2"/><rect x="2" y="5" width="20" height="14" rx="2"/></symbol><symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="i-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></symbol><symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol><symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol><symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></symbol><symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></symbol><symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1"/></symbol><symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol><symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol><symbol id="i-sync" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol><symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol><symbol id="i-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></symbol><symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol><symbol id="i-hash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="9" y2="9"/><line x1="4" x2="20" y1="15" y2="15"/><line x1="10" x2="8" y1="3" y2="21"/><line x1="16" x2="14" y1="3" y2="21"/></symbol><symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol><symbol id="i-bt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 7 10 10-5 5V2l5 5L7 17"/></symbol></svg>
 
-<!-- 단말 화면 : 원자재입고 등록 -->
+<!-- 단말 화면 -->
 <div class="device">
-  <section class="ph" id="S04-inbound-reg">
-    <div class="hd"><a class="bk" href="inbound_list.html" aria-label="뒤로"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></a><h1>원자재입고 등록</h1><span class="r"></span></div><div class="bd">
-<div class="card"><div class="row"><span class="cat">원자재</span><span class="t18 grow">국산 대두(가공용)</span></div><div class="t14">R1-203 · ㈜대한농산 · <span data-bind="po">PO12093719874</span></div>
-<div class="mini" style="margin-top:6px"><div><span class="t16b">100포</span><span class="t14">발주총량</span></div><div><span class="t16b">0포</span><span class="t14">입고총량</span></div><div><span class="t16b" style="color:#9a4d00">100포</span><span class="t14">미입고량</span></div></div></div>
-<div class="fld"><label for="q">입고수량</label><div class="inp"><input id="q" value="100" style="border:none;font:inherit;flex:1;min-width:0;outline:none;background:transparent"><span class="t14">포</span></div></div>
-<div class="fld"><label>업체 로트번호</label><button type="button" class="inp" data-scan="lot" style="border:2px solid #008d36;cursor:pointer;text-align:left"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 7v10"/><path d="M12 7v10"/><path d="M17 7v10"/></svg><span class="grow" data-bind="lot">LOT1234567</span><span class="bdg">탭하여 스캔</span></button></div>
-<div class="fld"><label>적재 위치 · 여러 곳에 나눠 적재 가능</label><div class="list"><div class="li"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg><span class="grow"><span class="t16b" style="display:block">맑은물에 냉장창고</span><span class="t14">위치 1</span></span><span class="t16b">60포</span></div><div class="li"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg><span class="grow"><span class="t16b" style="display:block">샘플홀딩스 물류센터 냉장창고</span><span class="t14">위치 2</span></span><span class="t16b">40포</span></div></div><div class="dash">+ 위치 추가</div><div class="t14" style="text-align:right">배분 합계 100포 = 입고수량</div></div>
-<div class="fld"><label>입고상태</label><div class="seg"><span>부분입고</span><span class="on">입고완료</span><span>반품</span></div></div>
-</div><div class="ft"><a class="btn" href="inbound_quality.html">품질검사 진행</a></div>
+  <section class="ph" aria-label="입고 등록">
+    <header class="hd"><a class="hd__back" href="inbound_list.html" aria-label="뒤로"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg></a><h1 class="hd__title" id="hdTitle">입고 등록</h1></header>
+    <div id="regMain" style="display:contents">
+      <main class="ph__body">
+        <div class="summary summary--bleed">
+          <p class="summary__head" id="sumHead"></p>
+          <h2 class="summary__title" id="sumTitle"></h2>
+          <p class="summary__sub num" id="sumSub"></p>
+          <div class="figures">
+            <div class="figures__item"><span class="figures__label">발주</span><span class="figures__value" id="figOrdered"></span></div>
+            <div class="figures__item"><span class="figures__label">기입고</span><span class="figures__value" id="figReceived"></span></div>
+            <div class="figures__item"><span class="figures__label">미입고</span><span class="figures__value" id="figRemain"></span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field__label" for="qtyIn">입고수량 (<span data-unit></span>)</label>
+          <div class="stepper" data-stepper id="qtyStep">
+            <button type="button" class="stepper__btn" data-step="-1" aria-label="줄이기"><svg class="ic" aria-hidden="true"><use href="#i-minus"/></svg></button>
+            <input class="stepper__input" id="qtyIn" type="number" inputmode="numeric" min="0" max="100" value="0">
+            <button type="button" class="stepper__btn" data-step="1" aria-label="늘리기"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg></button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="field__label" id="lotLabel">업체 LOT 번호</span>
+          <button type="button" class="pick pick--scan" data-scan="lot" aria-labelledby="lotLabel"><svg class="ic" aria-hidden="true"><use href="#i-scan"/></svg><span class="pick__value" id="lotValue"></span></button>
+          <p class="field__help" id="lotHelp" hidden>원자재와 부자재는 업체 LOT 번호를 스캔해야 다음으로 넘어갑니다</p>
+        </div>
+        <div class="field">
+          <span class="field__label">입고상태</span>
+          <div class="tabs" role="tablist" aria-label="입고상태" id="statusTabs">
+            <button type="button" class="tabs__btn" role="tab" data-value="부분입고" aria-selected="false">부분입고</button>
+            <button type="button" class="tabs__btn" role="tab" data-value="입고완료" aria-selected="true">입고완료</button>
+            <button type="button" class="tabs__btn" role="tab" data-value="반품" aria-selected="false">반품</button>
+          </div>
+        </div>
+        <section class="sec">
+          <div class="sec__head"><h2 class="sec__title">적재 위치</h2><button type="button" class="btn btn--line btn--xs" id="addLoc"><svg class="ic ic--s" aria-hidden="true"><use href="#i-plus"/></svg>위치 추가</button></div>
+          <div class="group" id="locList"></div>
+          <p class="field__help" id="locHelp"></p>
+        </section>
+      </main>
+      <footer class="ph__foot"><button type="button" class="btn" id="nextBtn">품질검사</button></footer>
+    </div>
+    <div class="empty" id="regEmpty" hidden><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg><p class="empty__title">입고 건을 찾을 수 없습니다</p><p>발주서 바코드를 다시 스캔하세요</p><button type="button" class="btn btn--line btn--sm" data-scan="route">다시 스캔</button></div>
   </section>
 
-  <!-- 카메라 스캔 레이어 (공통) -->
-  <div id="cam" class="cam" hidden>
-<div class="camtop"><span class="t16b" id="camTitle">바코드 스캔</span><button type="button" id="camClose" class="camx" aria-label="닫기">닫기</button></div>
-<div class="camview"><video id="camVideo" playsinline muted></video><div id="camLib"></div><div class="guide"><span></span></div><div class="camhint" id="camHint">바코드를 가이드 안에 맞춰주세요</div></div>
-<div class="cambottom">
-<div class="row"><input id="manIn" class="inp" placeholder="바코드 번호 직접 입력" autocomplete="off" style="flex:1"><button type="button" id="manGo" class="pill ok" style="min-height:52px">확인</button></div>
-<div class="t14">테스트 값 바로 넣기</div><div class="qks"><button type="button" class="qk" data-code="TS-20241127-0031">명세표</button><button type="button" class="qk" data-code="PK-20241127-01">피킹</button><button type="button" class="qk" data-code="PO12093719874">발주서</button><button type="button" class="qk" data-code="8809876543213">원자재</button><button type="button" class="qk" data-code="8801234560023">품목</button><button type="button" class="qk" data-code="EMP-0001">사원증</button></div>
-</div></div>
-<div id="toast" class="toast" hidden></div>
+  <!-- 카메라 스캔 (공통) -->
+  <div class="cam" id="cam" hidden>
+    <div class="cam__top"><span id="camTitle">바코드 스캔</span><button type="button" class="cam__close" id="camClose">닫기</button></div>
+    <div class="cam__view">
+      <video id="camVideo" playsinline muted></video>
+      <div id="camLib"></div>
+      <div class="cam__guide"></div>
+      <p class="cam__hint" id="camHint">바코드를 초록 상자 안에 맞춰주세요</p>
+    </div>
+    <div class="cam__bottom">
+      <div class="cam__manual">
+        <label class="sr-only" for="manIn">바코드 번호</label>
+        <input class="input" id="manIn" placeholder="바코드 번호 직접 입력" autocomplete="off">
+        <button type="button" class="btn" id="manGo">확인</button>
+      </div>
+      <p class="cam__demo-label">카메라 없이 시연</p>
+      <div class="cam__demo">
+        <button type="button" class="chip" data-demo="TS-20241127-0031">명세표</button>
+        <button type="button" class="chip" data-demo="PK-20241127-02">피킹리스트</button>
+        <button type="button" class="chip" data-demo="PO12093719874">발주서</button>
+        <button type="button" class="chip" data-demo="8801234560023">품목</button>
+        <button type="button" class="chip" data-demo="LOT7788001">업체 LOT</button>
+        <button type="button" class="chip" data-demo="EMP-0001">사원증</button>
+      </div>
+    </div>
+  </div>
 </div>
 <!-- //단말 화면 -->
 
-<!-- 프로토타입 보조 (실제 앱에서는 제외) -->
+<!-- 확인용 보조 UI (실제 앱에서는 제외) -->
 <div class="chrome">
-  <button type="button" id="bMan">이 화면 설명서</button>
+  <button type="button" data-modal-open="mMan">이 화면 설명서</button>
   <a href="test_barcodes.html" target="_blank" rel="noopener">샘플 바코드</a>
-  <button type="button" id="bNav">화면 목록</button>
+  <button type="button" data-modal-open="mNav">화면 목록</button>
 </div>
 <div class="modal" id="mMan" hidden>
-  <div class="mbox">
-    <div class="man"><div><div class="tag">04 · 입고</div><h2>입고 등록</h2></div><div class="steps"><div class="step"><div class="pic"><span class="no">1</span><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" x2="20" y1="9" y2="9"/><line x1="4" x2="20" y1="15" y2="15"/><line x1="10" x2="8" y1="3" y2="21"/><line x1="16" x2="14" y1="3" y2="21"/></svg></div><p><b>입고수량 입력</b>모자라면 미입고량으로 남고 부분입고 처리</p></div><div class="step"><div class="pic"><span class="no">2</span><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 7v10"/><path d="M12 7v10"/><path d="M17 7v10"/></svg></div><p><b>업체 LOT 바코드 스캔</b>로트번호가 자동 입력됩니다</p></div><div class="step"><div class="pic"><span class="no">3</span><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></div><p><b>적재 위치 지정 · 분할</b>여러 위치에 나눠 적재 가능</p></div><div class="step"><div class="pic"><span class="no">4</span><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></div><p><b>품질검사로 이동</b>육안검사 후 입고 확정</p></div></div><div class="erp"><b><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>ERP 연동 · 입출고정보 관리 › 원자재입고</b>입고등록(입고일자, 입고수량, 미입고량, 업체로트번호, 창고지정, 입고상태)에 저장합니다. 위치가 여러 곳이면 위치별 수량으로 나눠 저장합니다.</div></div>
-    <button type="button" class="mclose" data-close>닫기</button>
+  <div class="modal__box">
+    <article class="man">
+      <header><p class="man__tag">입고</p><h2 class="man__title">입고 등록</h2></header>
+      <ol class="man__steps">
+        <li class="man__step"><span class="man__pic"><span class="man__no">1</span><svg class="ic" aria-hidden="true"><use href="#i-hash"/></svg></span><p><b>입고수량 입력</b>모자라면 미입고량이 남고 부분입고가 됩니다</p></li>
+        <li class="man__step"><span class="man__pic"><span class="man__no">2</span><svg class="ic" aria-hidden="true"><use href="#i-scan"/></svg></span><p><b>업체 LOT 스캔</b>LOT 칸을 누르고 바코드를 찍습니다</p></li>
+        <li class="man__step"><span class="man__pic"><span class="man__no">3</span><svg class="ic" aria-hidden="true"><use href="#i-pin"/></svg></span><p><b>적재 위치 배분</b>여러 위치에 나눠 적재할 수 있습니다</p></li>
+        <li class="man__step"><span class="man__pic"><span class="man__no">4</span><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg></span><p><b>품질검사로 이동</b>원자재와 부자재는 육안검사를 거칩니다</p></li>
+      </ol>
+      <p class="man__erp"><b><svg class="ic" aria-hidden="true"><use href="#i-sync"/></svg>ERP 연동  입출고정보 관리 › 입고등록</b>입고일자, 입고수량, 미입고량, 업체로트번호, 창고지정, 입고상태를 저장합니다.</p>
+    </article>
+    <button type="button" class="modal__close" data-close>닫기</button>
   </div>
 </div>
 <div class="modal" id="mNav" hidden>
-  <div class="mbox">
+  <div class="modal__box">
     <nav class="navlist" id="navlist" aria-label="화면 목록"></nav>
-    <button type="button" class="mclose" data-close>닫기</button>
+    <button type="button" class="modal__close" data-close>닫기</button>
   </div>
 </div>
-
 </body>
 </html>

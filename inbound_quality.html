@@ -4,57 +4,97 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#008d36">
-  <title>원자재 품질검사 · 맑은물에 PDA</title>
+  <title>품질검사 | 맑은물에 PDA</title>
   <link rel="stylesheet" href="./static/css/pda_common.css">
   <link rel="stylesheet" href="./static/css/pda_component.css">
   <link rel="stylesheet" href="./static/css/pda_content.css">
   <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
-  <script src="./static/js/pda_scan.js" defer></script>
+  <script src="./static/js/pda_data.js" defer></script>
   <script src="./static/js/pda_ui.js" defer></script>
+  <script src="./static/js/pda_scan.js" defer></script>
+  <script src="./static/js/pda_pages.js" defer></script>
 </head>
-<body data-page="S05-quality">
+<body data-page="inbound_quality">
+<svg class="sprite" aria-hidden="true" focusable="false"><symbol id="i-scan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 7v10"/><path d="M12 7v10"/><path d="M17 7v10"/></symbol><symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></symbol><symbol id="i-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol><symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol><symbol id="i-inbox" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol><symbol id="i-outbox" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></symbol><symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></symbol><symbol id="i-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></symbol><symbol id="i-truck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></symbol><symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="i-checkc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol><symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol><symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></symbol><symbol id="i-minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></symbol><symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></symbol><symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol><symbol id="i-idcard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 10h2"/><path d="M16 14h2"/><path d="M6.17 15a3 3 0 0 1 5.66 0"/><circle cx="9" cy="11" r="2"/><rect x="2" y="5" width="20" height="14" rx="2"/></symbol><symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="i-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></symbol><symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol><symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol><symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></symbol><symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></symbol><symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1"/></symbol><symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol><symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol><symbol id="i-sync" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol><symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol><symbol id="i-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></symbol><symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol><symbol id="i-hash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="9" y2="9"/><line x1="4" x2="20" y1="15" y2="15"/><line x1="10" x2="8" y1="3" y2="21"/><line x1="16" x2="14" y1="3" y2="21"/></symbol><symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol><symbol id="i-bt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 7 10 10-5 5V2l5 5L7 17"/></symbol></svg>
 
-<!-- 단말 화면 : 원자재 품질검사 -->
+<!-- 단말 화면 -->
 <div class="device">
-  <section class="ph" id="S05-quality">
-    <div class="hd"><a class="bk" href="inbound_reg.html" aria-label="뒤로"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></a><h1>원자재 품질검사</h1><span class="r"></span></div><div class="bd" style="gap:10px">
-<div class="card"><div class="row"><span class="cat">원자재</span><span class="t18 grow">국산 대두(가공용)</span></div><div class="t14">㈜대한농산 · <span data-bind="lot">LOT1234567</span> · 100포</div></div>
-<div class="row"><span class="t16b grow">검사 항목 6</span><span class="bdg" id="qsum">전 항목 적합</span></div>
-<div class="list" id="qlist"><div class="li"><div class="grow"><div class="t16b">성상</div><div class="t14">황색 원형, 곰팡이 · 이물 없을 것</div></div><button class="pill ok" data-q="0" data-v="ok">적합</button><button class="pill" data-q="0" data-v="ng">부적합</button></div><div class="li"><div class="grow"><div class="t16b">이물</div><div class="t14">혼입이 없을 것</div></div><button class="pill ok" data-q="1" data-v="ok">적합</button><button class="pill" data-q="1" data-v="ng">부적합</button></div><div class="li"><div class="grow"><div class="t16b">구분관리증명서</div><div class="t14">증명서 · 원산지 증명서 확인</div></div><button class="pill ok" data-q="2" data-v="ok">적합</button><button class="pill" data-q="2" data-v="ng">부적합</button></div><div class="li"><div class="grow"><div class="t16b">병충해립</div><div class="t14">없을 것</div></div><button class="pill ok" data-q="3" data-v="ok">적합</button><button class="pill" data-q="3" data-v="ng">부적합</button></div><div class="li"><div class="grow"><div class="t16b">포장상태</div><div class="t14">이상 없을 것</div></div><button class="pill ok" data-q="4" data-v="ok">적합</button><button class="pill" data-q="4" data-v="ng">부적합</button></div><div class="li"><div class="grow"><div class="t16b">운반차량 청결</div><div class="t14">청결할 것</div></div><button class="pill ok" data-q="5" data-v="ok">적합</button><button class="pill" data-q="5" data-v="ng">부적합</button></div></div>
-<div class="fld" id="qreason" hidden><label for="n">부적합 사유</label><input id="n" class="inp" placeholder="사유 입력 · 사진 첨부"></div>
-</div><div class="ft"><a class="btn" href="inbound_done.html">검수 완료 → 입고 확정</a></div>
+  <section class="ph" aria-label="품질검사">
+    <header class="hd"><a class="hd__back" href="inbound_reg.html" aria-label="뒤로"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg></a><h1 class="hd__title" id="hdTitle">품질검사</h1></header>
+    <main class="ph__body">
+      <div class="summary summary--bleed">
+        <p class="summary__head" id="sumHead"></p>
+        <h2 class="summary__title" id="sumTitle"></h2>
+        <p class="summary__sub num" id="sumSub"></p>
+      </div>
+      <section class="sec">
+        <div class="sec__head"><h2 class="sec__title">육안 검사</h2><span id="qcSum"></span></div>
+        <div class="group" id="qcList"></div>
+      </section>
+      <div class="field" id="qcReason" hidden>
+        <label class="field__label" for="reasonIn">부적합 사유</label>
+        <textarea class="input" id="reasonIn" placeholder="예: 포대 2개 파손, 일부 젖음"></textarea>
+        <button type="button" class="btn btn--quiet btn--sm" id="photoBtn"><svg class="ic ic--s" aria-hidden="true"><use href="#i-camera"/></svg> 사진 첨부</button>
+      </div>
+    </main>
+    <footer class="ph__foot"><button type="button" class="btn" id="doneBtn">검수 완료</button></footer>
   </section>
 
-  <!-- 카메라 스캔 레이어 (공통) -->
-  <div id="cam" class="cam" hidden>
-<div class="camtop"><span class="t16b" id="camTitle">바코드 스캔</span><button type="button" id="camClose" class="camx" aria-label="닫기">닫기</button></div>
-<div class="camview"><video id="camVideo" playsinline muted></video><div id="camLib"></div><div class="guide"><span></span></div><div class="camhint" id="camHint">바코드를 가이드 안에 맞춰주세요</div></div>
-<div class="cambottom">
-<div class="row"><input id="manIn" class="inp" placeholder="바코드 번호 직접 입력" autocomplete="off" style="flex:1"><button type="button" id="manGo" class="pill ok" style="min-height:52px">확인</button></div>
-<div class="t14">테스트 값 바로 넣기</div><div class="qks"><button type="button" class="qk" data-code="TS-20241127-0031">명세표</button><button type="button" class="qk" data-code="PK-20241127-01">피킹</button><button type="button" class="qk" data-code="PO12093719874">발주서</button><button type="button" class="qk" data-code="8809876543213">원자재</button><button type="button" class="qk" data-code="8801234560023">품목</button><button type="button" class="qk" data-code="EMP-0001">사원증</button></div>
-</div></div>
-<div id="toast" class="toast" hidden></div>
+  <!-- 카메라 스캔 (공통) -->
+  <div class="cam" id="cam" hidden>
+    <div class="cam__top"><span id="camTitle">바코드 스캔</span><button type="button" class="cam__close" id="camClose">닫기</button></div>
+    <div class="cam__view">
+      <video id="camVideo" playsinline muted></video>
+      <div id="camLib"></div>
+      <div class="cam__guide"></div>
+      <p class="cam__hint" id="camHint">바코드를 초록 상자 안에 맞춰주세요</p>
+    </div>
+    <div class="cam__bottom">
+      <div class="cam__manual">
+        <label class="sr-only" for="manIn">바코드 번호</label>
+        <input class="input" id="manIn" placeholder="바코드 번호 직접 입력" autocomplete="off">
+        <button type="button" class="btn" id="manGo">확인</button>
+      </div>
+      <p class="cam__demo-label">카메라 없이 시연</p>
+      <div class="cam__demo">
+        <button type="button" class="chip" data-demo="TS-20241127-0031">명세표</button>
+        <button type="button" class="chip" data-demo="PK-20241127-02">피킹리스트</button>
+        <button type="button" class="chip" data-demo="PO12093719874">발주서</button>
+        <button type="button" class="chip" data-demo="8801234560023">품목</button>
+        <button type="button" class="chip" data-demo="LOT7788001">업체 LOT</button>
+        <button type="button" class="chip" data-demo="EMP-0001">사원증</button>
+      </div>
+    </div>
+  </div>
 </div>
 <!-- //단말 화면 -->
 
-<!-- 프로토타입 보조 (실제 앱에서는 제외) -->
+<!-- 확인용 보조 UI (실제 앱에서는 제외) -->
 <div class="chrome">
-  <button type="button" id="bMan">이 화면 설명서</button>
+  <button type="button" data-modal-open="mMan">이 화면 설명서</button>
   <a href="test_barcodes.html" target="_blank" rel="noopener">샘플 바코드</a>
-  <button type="button" id="bNav">화면 목록</button>
+  <button type="button" data-modal-open="mNav">화면 목록</button>
 </div>
 <div class="modal" id="mMan" hidden>
-  <div class="mbox">
-    <div class="man"><div><div class="tag">05 · 입고</div><h2>입고 품질검사</h2></div><div class="steps"><div class="step"><div class="pic"><span class="no">1</span><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg></div><p><b>항목별 육안 확인</b>성상 · 이물 · 증명서 · 병충해립 · 포장 · 차량</p></div><div class="step"><div class="pic"><span class="no">2</span><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></div><p><b>적합 / 부적합 터치</b>기본값은 적합, 이상 있을 때만 부적합</p></div><div class="step"><div class="pic"><span class="no">3</span><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg></div><p><b>부적합이면 사유 입력</b>사진 첨부 · 부분 반품 처리</p></div><div class="step"><div class="pic"><span class="no">4</span><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></div><p><b>결과를 ERP로 전송</b>품질승인 상태가 함께 바뀝니다</p></div></div><div class="erp"><b><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#008d36" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>ERP 연동 · 품질 정보관리 › 원자재 품질관리</b>품질검사(육안)의 검사항목 · 기준 · 검사방법 · 판정을 그대로 사용합니다.</div></div>
-    <button type="button" class="mclose" data-close>닫기</button>
+  <div class="modal__box">
+    <article class="man">
+      <header><p class="man__tag">입고</p><h2 class="man__title">품질검사</h2></header>
+      <ol class="man__steps">
+        <li class="man__step"><span class="man__pic"><span class="man__no">1</span><svg class="ic" aria-hidden="true"><use href="#i-eye"/></svg></span><p><b>항목별 육안 확인</b>성상, 이물, 증명서, 병충해립, 포장, 차량</p></li>
+        <li class="man__step"><span class="man__pic"><span class="man__no">2</span><svg class="ic" aria-hidden="true"><use href="#i-checkc"/></svg></span><p><b>적합 또는 부적합</b>기본은 적합, 이상이 있을 때만 바꿉니다</p></li>
+        <li class="man__step"><span class="man__pic"><span class="man__no">3</span><svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg></span><p><b>부적합이면 사유 입력</b>사진을 첨부할 수 있습니다</p></li>
+        <li class="man__step"><span class="man__pic"><span class="man__no">4</span><svg class="ic" aria-hidden="true"><use href="#i-sync"/></svg></span><p><b>ERP로 판정 전송</b>품질승인 상태가 함께 바뀝니다</p></li>
+      </ol>
+      <p class="man__erp"><b><svg class="ic" aria-hidden="true"><use href="#i-sync"/></svg>ERP 연동  품질 정보관리 › 원자재 품질관리</b>품질검사(육안)의 검사항목, 기준, 판정을 그대로 씁니다.</p>
+    </article>
+    <button type="button" class="modal__close" data-close>닫기</button>
   </div>
 </div>
 <div class="modal" id="mNav" hidden>
-  <div class="mbox">
+  <div class="modal__box">
     <nav class="navlist" id="navlist" aria-label="화면 목록"></nav>
-    <button type="button" class="mclose" data-close>닫기</button>
+    <button type="button" class="modal__close" data-close>닫기</button>
   </div>
 </div>
-
 </body>
 </html>

@@ -4,31 +4,32 @@
 
 ## 구조
 ```
-index.html                 화면 목록
-login.html                 01 로그인
-home.html                  02 통합 스캔 홈
-inbound_list.html          03 입고 대기
-inbound_reg.html           04 원자재입고 등록
-inbound_quality.html       05 원자재 품질검사
-inbound_done.html          06 원자재입고 확정 · 라벨 출력
-outbound_picking.html      07 출고 · 피킹리스트
-outbound_check.html        08 출고 확인 · 상차
-print.html                 09 출력
-stock.html                 10 재고 조회
-test_barcodes.html         테스트 바코드 (PC 화면에 띄워 스캔)
-static/
-  css/pda_common.css       폰트 · 리셋 · 레이아웃 · 타이포그래피 · 색상 변수
-  css/pda_component.css    헤더 · 버튼 · 카드 · 목록 · 입력 · 배지 · 스캔 바
-  css/pda_content.css      카메라 스캔 · 알림 · 설명서 · 프로토타입 보조 UI
-  js/pda_scan.js           카메라 / PDA 스캐너 / 직접 입력 → 바코드 종류별 화면 이동
-  js/pda_ui.js             화면 목록 · 설명서 · 알림 · 화면별 동작
-  img/common/logo.svg      맑은물에 로고
-  font/                    Pretendard
+index.html                화면 목록
+login.html                로그인 (아이디 · 비밀번호 / 사원증 스캔)
+home.html                 통합 스캔 홈
+inbound_list.html         입고 대기 (구분별 필터)
+inbound_reg.html          입고 등록 (수량, 업체 LOT, 입고상태, 적재 위치 배분)
+inbound_quality.html      품질검사 (원자재 · 부자재)
+inbound_done.html         입고 확정 · 라벨 출력
+outbound_picking.html     출고 · 피킹리스트 (구분별 필터)
+outbound_check.html       출고 확인 · 상차
+print.html                출력 (거래명세표 · 피킹리스트 · 입고 라벨)
+stock.html                재고 조회 (제품 · 원자재 · 부자재)
+test_barcodes.html        테스트 바코드
+static/css/pda_common.css     폰트, 색상 변수, 리셋, 360×640 레이아웃
+static/css/pda_component.css  헤더, 버튼, 스캔 바, 탭, 칩, 목록, 입력, 수량 조절, 배지
+static/css/pda_content.css    요약 영역, 화면별 콘텐츠, 시트, 처리 중, 알림, 카메라, 설명서
+static/js/pda_data.js         샘플 데이터 (실제 개발 시 ERP API로 교체)
+static/js/pda_ui.js           알림, 처리 중, 바텀 시트, 탭, 수량 조절
+static/js/pda_scan.js         카메라 / PDA 스캐너 / 직접 입력 → 바코드 종류별 화면 이동
+static/js/pda_pages.js        화면별 동작 (body data-page 기준)
+static/img/common/logo.svg    맑은물에 로고
+static/font/                  Pretendard
 ```
 
 ## 확인 방법
-- 카메라 스캔은 HTTPS 주소에서만 동작합니다. 폴더째 서버에 올려 확인하세요.
-- `.chrome` / `.modal` 영역(설명서 · 화면 목록)은 확인용이며 실제 앱에서는 제외합니다.
-- 화면 간 값 전달: `outbound_check.html?code=TS-...&type=ts` 형식
+- 카메라 스캔은 HTTPS 주소에서만 동작합니다.
+- 출고 완료, 입고 확정 결과는 브라우저 세션 동안 유지됩니다. "화면 목록 › 시연 데이터 초기화"로 처음 상태로 돌립니다.
+- `.chrome`, `.modal` 영역(설명서, 샘플 바코드, 화면 목록)은 확인용이며 실제 앱에서는 제외합니다.
 
 > 공개 저장소용 샘플입니다. 법인명 · 거래처명 · 차량번호 · 제품명 · 재고 수치는 가상 값으로 바꿨습니다.
