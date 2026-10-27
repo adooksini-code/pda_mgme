@@ -176,3 +176,6 @@
   .login .checkline{min-height:36px}
   .login__form .btn{min-height:48px}
 }
+
+/* 폭이 360보다 넓은 휴대폰 브라우저 */
+@media (max-width:480px){.chrome{width:100%;padding:0 8px}.navlist,.man{width:min(360px,100%)}}
