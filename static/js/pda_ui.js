@@ -155,12 +155,38 @@
   }
   document.addEventListener('click', function (e) { if (e.target.closest('[data-install]')) install(); });
 
+  /* ---------- 버전 표시 · 새 버전 확인 ---------- */
+  var V = window.PDA_VERSION || { version: '-', build: '' };
+  function verText(v) { return '버전 ' + v.version + (v.build ? '  (' + v.build.slice(5).replace('-', '.') + ' 업데이트)' : ''); }
+  function checkUpdate() {
+    if (location.protocol === 'file:') return;
+    fetch('version.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (srv) {
+      if (!srv || !srv.version || (srv.version === V.version && srv.build === V.build)) return;
+      sheet({ title: '새 버전이 있습니다', html: '<p class="item__sub" style="padding:0 20px 8px">설치된 버전 ' + esc(V.version) + ' → 새 버전 ' + esc(srv.version) + '</p>',
+        items: [{ label: '지금 업데이트', sub: '앱을 다시 불러옵니다', icon: 'sync', value: 'go' }], foot: '나중에' }).then(function (v) {
+        if (v !== 'go') return;
+        loading('업데이트 중', '새 버전 ' + srv.version, 300).then(function () {
+          var done = function () { location.reload(); };
+          if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) {
+            navigator.serviceWorker.getRegistration().then(function (reg) {
+              if (!reg) return done();
+              caches.keys().then(function (k) { return Promise.all(k.map(function (x) { return caches.delete(x); })); })
+                .then(function () { return reg.update(); }).then(done, done);
+            });
+          } else done();
+        });
+      });
+    }).catch(function () {});
+  }
+
   /* ---------- 시작 ---------- */
   document.addEventListener('DOMContentLoaded', function () {
     initTabs(); initSteppers(); initPw(); initChrome();
+    $$('[data-version]').forEach(function (e) { e.textContent = verText(V); });
+    setTimeout(checkUpdate, 1200);
     try { var m = sessionStorage.getItem('pda_toast'); if (m) { sessionStorage.removeItem('pda_toast'); m = JSON.parse(m); setTimeout(function () { toast(m.text, m.kind); }, 120); } } catch (e) {}
   });
 
-  window.PdaUI = { $: $, $$: $$, esc: esc, fmt: fmt, icon: icon, toast: toast, loading: loading, busy: busy, go: go, sheet: sheet, install: install, standalone: standalone,
+  window.PdaUI = { $: $, $$: $$, esc: esc, fmt: fmt, icon: icon, toast: toast, loading: loading, busy: busy, go: go, sheet: sheet, install: install, standalone: standalone, version: V, verText: verText,
     initTabs: initTabs, initSteppers: initSteppers, selectTab: selectValue, params: new URLSearchParams(location.search) };
 })();

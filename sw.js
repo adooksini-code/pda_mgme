@@ -4,12 +4,12 @@
    - 화면(HTML)은 네트워크 우선, 그 밖의 파일은 저장본 우선입니다.
    - 파일을 바꾸면 VERSION 값을 올려 주세요.
 ================================================== */
-var VERSION = 'pda-v1.0.1';
+var VERSION = 'pda-1.0.3-202610271108';
 var FILES = [
   './', './index.html', './login.html', './home.html', './inbound_list.html', './inbound_reg.html', './inbound_quality.html', './inbound_done.html',
   './outbound_picking.html', './outbound_check.html', './print.html', './stock.html', './test_barcodes.html', './manifest.webmanifest',
   './static/css/pda_common.css', './static/css/pda_component.css', './static/css/pda_content.css',
-  './static/js/pda_data.js', './static/js/pda_ui.js', './static/js/pda_scan.js', './static/js/pda_pages.js',
+  './static/js/pda_version.js', './static/js/pda_data.js', './static/js/pda_ui.js', './static/js/pda_scan.js', './static/js/pda_pages.js',
   './static/img/common/logo.svg', './static/img/pwa/icon-192.png', './static/img/pwa/icon-512.png',
   './static/font/Pretendard-Regular.woff2', './static/font/Pretendard-Bold.woff2'
 ];
@@ -30,6 +30,7 @@ self.addEventListener('fetch', function (e) {
   if (req.method !== 'GET') return;
   var url = new URL(req.url);
   if (url.origin !== location.origin && req.url !== CDN) return;
+  if (url.pathname.endsWith('/version.json')) return; // 최신 버전 확인은 항상 서버에서
   if (req.mode === 'navigate') {
     // 화면: 네트워크 우선 → 실패하면 저장본 (주소 뒤 ?code= 같은 값은 무시하고 찾기)
     e.respondWith(fetch(req).then(function (res) {
