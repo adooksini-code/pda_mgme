@@ -214,3 +214,16 @@
 .is-minus{color:var(--c-red)!important}
 .is-plus{color:var(--c-brand-deep)!important}
 .chips--wrap{flex-wrap:wrap;margin:0;padding:0;overflow:visible}
+
+/* ---------- 선입선출 (오래된 LOT 먼저) ---------- */
+.sec__hint{font-size:12px;font-weight:400;color:var(--c-ink-3);margin-left:4px}
+.fifo-rank{flex:none;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;background:var(--c-gray-bg);color:var(--c-ink-2)}
+.fifo-rank.is-first{background:var(--c-brand);color:#fff}
+.badge--fifo{height:20px;padding:0 7px;font-size:11px;background:var(--c-mint);color:var(--c-brand-deep);margin-left:6px}
+.fifo{display:flex;flex-direction:column;gap:3px;margin-top:6px;padding:6px 8px;border-radius:var(--r-s);background:var(--c-canvas)}
+.fifo__row{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--c-ink-2)}
+.fifo__no{flex:none;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;background:#d5dbe1;color:#fff}
+.fifo__txt{flex:1;min-width:0}
+.fifo__qty{flex:none;font-weight:700;color:var(--c-ink)}
+.fifo__row.is-first{color:var(--c-brand-deep);font-weight:700}
+.fifo__row.is-first .fifo__no{background:var(--c-brand)}

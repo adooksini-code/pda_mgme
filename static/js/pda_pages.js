@@ -70,6 +70,15 @@
   /* 발주일 표기 : 2026-10-24 → 10.24 */
   function mmdd(d) { return d ? d.slice(5).replace('-', '.') : ''; }
 
+  /* 선입선출 : LOT(생산일 YYMMDD) 오래된 순으로 정렬 */
+  function byLot(a, b) { return String(a.lot).localeCompare(String(b.lot)); }
+  function fifoHtml(lots, unit) {
+    if (!lots || !lots.length) return '';
+    return '<span class="fifo">' + lots.slice().sort(byLot).map(function (l, i) {
+      return '<span class="fifo__row' + (i === 0 ? ' is-first' : '') + '"><span class="fifo__no">' + (i + 1) + '</span><span class="fifo__txt num">' + esc(l.wh) + ' · LOT ' + esc(l.lot) + '</span><span class="fifo__qty num">' + fmt(l.box) + unit + '</span></span>';
+    }).join('') + '</span>';
+  }
+
   /* ========== 홈 ========== */
   P['home'] = function () {
     var c = Q.counts();
@@ -328,7 +337,7 @@
     $('#itemList').innerHTML = o.items.map(function (it, i) {
       return '<button type="button" class="item" data-i="' + i + '" aria-pressed="false"><span class="check">' + icon('check') + '</span>' +
         '<span class="item__body"><span class="item__title"><span>' + esc(it.name) + '</span></span>' +
-        '<span class="item__sub">소비기한 ' + esc(it.exp) + '</span><span class="item__sub">위치 ' + esc(it.loc) + '</span></span>' +
+        '<span class="item__sub">소비기한 ' + esc(it.exp) + '</span>' + fifoHtml(it.lots, '박스') + '</span>' +
         '<span class="item__end num">' + it.box + '<small>박스</small></span></button>';
     }).join('');
     function upd() {
@@ -420,8 +429,11 @@
       $('#figWh').textContent = fmt(wh); $('#figEx').textContent = fmt(ex);
       $('#whMeta').innerHTML = '<b>' + fmt(wh) + '</b>';
       $('#exMeta').innerHTML = '<b>' + fmt(ex) + '</b>';
-      $('#whList').innerHTML = s.locs.map(function (l) { return '<div class="item"><span class="item__lead">' + icon('pin') + '</span><span class="item__body"><span class="item__title"><span>' + esc(l.name) + '</span></span><span class="item__sub num">LOT ' + esc(l.lot) + '</span></span><span class="item__end num">' + fmt(l.qty) + '</span></div>'; }).join('');
-      $('#exList').innerHTML = s.ext.length ? s.ext.map(function (l) { return '<div class="item"><span class="item__lead">' + icon('pin') + '</span><span class="item__body"><span class="item__title"><span>' + esc(l.corp + ' ' + l.wh) + '</span></span><span class="item__sub num">LOT ' + esc(l.lot) + '</span></span><span class="item__end num">' + fmt(l.qty) + '</span></div>'; }).join('')
+      function lotRow(title, l, i) {
+        return '<div class="item"><span class="fifo-rank' + (i === 0 ? ' is-first' : '') + '">' + (i + 1) + '</span><span class="item__body"><span class="item__title"><span>' + esc(title) + '</span>' + (i === 0 ? '<span class="badge badge--fifo">먼저 출고</span>' : '') + '</span><span class="item__sub num">LOT ' + esc(l.lot) + '</span></span><span class="item__end num">' + fmt(l.qty) + '</span></div>';
+      }
+      $('#whList').innerHTML = s.locs.slice().sort(byLot).map(function (l, i) { return lotRow(l.name, l, i); }).join('');
+      $('#exList').innerHTML = s.ext.length ? s.ext.slice().sort(byLot).map(function (l, i) { return lotRow(l.corp + ' ' + l.wh, l, i); }).join('')
         : '<div class="item"><span class="item__body"><span class="item__sub">홀딩스에 보관 중인 재고가 없습니다</span></span></div>';
       $('#stMain').scrollTop = 0;
     }
