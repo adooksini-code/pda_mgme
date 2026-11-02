@@ -67,6 +67,9 @@
     } };
   };
 
+  /* 발주일 표기 : 2026-10-24 → 10.24 */
+  function mmdd(d) { return d ? d.slice(5).replace('-', '.') : ''; }
+
   /* ========== 홈 ========== */
   P['home'] = function () {
     var c = Q.counts();
@@ -105,6 +108,7 @@
         return '<a class="item" href="inbound_reg.html?id=' + encodeURIComponent(r.id) + '"><span class="item__body">' +
           '<span class="item__title"><span class="tag">' + esc(r.cat) + '</span><span>' + esc(r.partner) + '</span></span>' +
           '<span class="item__sub meta">' + meta([r.name + (r.spec ? ' ' + r.spec : ''), r.vehicle && '차량 ' + r.vehicle]) + '</span>' +
+          '<span class="item__sub num">발주일 ' + mmdd(r.orderDate) + '</span>' +
           '<span class="item__foot"><span class="num">발주 ' + fmt(r.ordered) + r.unit + ' / 입고 ' + fmt(r.received) + r.unit + '</span>' + badgeOf(st) + '</span>' +
           '</span>' + icon('chev', 'item__chev') + '</a>';
       }).join('');
@@ -125,7 +129,7 @@
     $('#hdTitle').textContent = r.menu + ' 등록';
     $('#sumHead').innerHTML = '<span class="tag">' + esc(r.cat) + '</span><span>' + esc(r.name) + (r.spec ? ' · ' + esc(r.spec) : '') + '</span>';
     $('#sumTitle').textContent = r.partner;   // 거래처를 크게
-    $('#sumSub').className = 'summary__sub num meta'; $('#sumSub').innerHTML = meta([r.vehicle && '차량 ' + r.vehicle, r.id]);
+    $('#sumSub').className = 'summary__sub num meta'; $('#sumSub').innerHTML = meta(['발주일 ' + mmdd(r.orderDate), r.vehicle && '차량 ' + r.vehicle, r.id]);
     $('#figOrdered').innerHTML = fmt(r.ordered) + '<small>' + r.unit + '</small>';
     $('#figReceived').innerHTML = fmt(r.received) + '<small>' + r.unit + '</small>';
     $$('[data-unit]').forEach(function (e) { e.textContent = r.unit; });
@@ -208,7 +212,7 @@
     $('#hdTitle').textContent = r.cat + ' 품질검사';
     $('#sumHead').innerHTML = '<span class="tag">' + esc(r.cat) + '</span><span>' + esc(r.name) + (r.spec ? ' · ' + esc(r.spec) : '') + '</span>';
     $('#sumTitle').textContent = r.partner;   // 거래처를 크게
-    $('#sumSub').className = 'summary__sub num meta'; $('#sumSub').innerHTML = meta(['입고 ' + fmt(d.qty) + r.unit, d.lot && '업체 LOT ' + d.lot.replace(/^LOT/i, '')]);
+    $('#sumSub').className = 'summary__sub num meta'; $('#sumSub').innerHTML = meta(['발주일 ' + mmdd(r.orderDate), '입고 ' + fmt(d.qty) + r.unit, d.lot && '업체 LOT ' + d.lot.replace(/^LOT/i, '')]);
     $('#qcList').innerHTML = items.map(function (q, i) {
       return '<div class="item"><span class="item__body"><span class="item__title"><span>' + esc(q.name) + '</span></span><span class="item__sub">' + esc(q.std) + '</span></span>' +
         '<div class="judge" role="radiogroup" aria-label="' + esc(q.name) + ' 판정" data-q="' + i + '">' +
@@ -245,7 +249,7 @@
     $('#sumHead').innerHTML = '<span class="tag">' + esc(r.cat) + '</span><span>' + esc(r.name) + (r.spec ? ' · ' + esc(r.spec) : '') + '</span>';
     $('#sumTitle').textContent = r.partner;   // 거래처를 크게
     var qc = !r.quality ? '해당 없음' : (d.qc && d.qc.ng ? '부적합 ' + d.qc.ng + '건' : '전 항목 적합');
-    $('#doneKv').innerHTML = [['입고번호', inNo], ['입고수량', fmt(d.qty) + r.unit], ['업체 LOT', d.lot || '없음'], ['품질검사', qc]]
+    $('#doneKv').innerHTML = [['입고번호', inNo], ['발주일', r.orderDate || '-'], ['입고수량', fmt(d.qty) + r.unit], ['업체 LOT', d.lot || '없음'], ['품질검사', qc]]
       .map(function (k) { return '<div class="kv__row"><dt>' + k[0] + '</dt><dd class="num">' + esc(k[1]) + '</dd></div>'; }).join('');
     $('#doneLocs').innerHTML = d.locs.map(function (l) { return '<div class="item"><span class="item__lead">' + icon('pin') + '</span><span class="item__body"><span class="item__title"><span>' + esc(l.name) + '</span></span></span><span class="item__end num">' + fmt(l.qty) + r.unit + '</span></div>'; }).join('');
     $('#labelBox').innerHTML = barsSvg(inNo) + '<span class="label__code">' + inNo + '-01</span><span class="label__desc">' + esc(r.name) + '<br>' + esc(d.locs[0].name) + ' ' + fmt(d.locs[0].qty) + r.unit + '</span>';
