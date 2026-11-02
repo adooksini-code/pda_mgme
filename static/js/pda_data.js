@@ -78,6 +78,22 @@ window.PDA_DATA = {
         { name: '황산칼슘', ean: '8809876543213', box: 4, exp: '27.07.27', loc: '맑은물에 상온 4', lots: [ { wh: '맑은물에 상온', lot: '261013', box: 4 } ] }
       ] }
   ],
+  /* 홈 구분 (원부자재 / 완제품) */
+  groupOf: {
+    inbound: { '원자재': '원부자재', '부자재': '원부자재', '완제품(OEM)': '완제품', '계열사 완제품': '완제품' },
+    outbound: { '원자재출고': '원부자재', '부자재출고': '원부자재', '주문 출고': '완제품', '홀딩스 출고': '완제품', '계열사 완제품출고': '완제품' },
+    stock: { '원자재': '원부자재', '부자재': '원부자재', '제품': '완제품' }
+  },
+
+  /* 오늘 나에게 배정된 업무 (실제로는 ERP 작업지시 · 담당자 기준) */
+  tasks: [
+    { kind: '출고', group: '완제품',   time: '05:00', title: '피킹리스트 PK-20241127-02', sub: 'A유통 인천센터 외 1곳 · 1배차', url: 'outbound_group.html?code=PK-20241127-02', ref: { pk: 'PK-20241127-02' } },
+    { kind: '입고', group: '원부자재', time: '09:00', title: '㈜대한농산 · 국산 대두(가공용)', sub: '100포 · 발주일 10.22', url: 'inbound_reg.html?id=PO12093719874', ref: { inId: 'PO12093719874' } },
+    { kind: '출고', group: '원부자재', time: '10:00', title: '가나식품 생산동 원자재출고', sub: '국산 대두 외 1건 · 원료 투입', url: 'outbound_check.html?code=TS-20241127-0051', ref: { ts: 'TS-20241127-0051' } },
+    { kind: '입고', group: '완제품',   time: '13:00', title: '가나식품 차량별 입고', sub: '96박스 · 12가3456', url: 'inbound_reg.html?id=VH-20261026-2058', ref: { inId: 'VH-20261026-2058' } },
+    { kind: '실사', group: '원부자재', time: '16:00', title: '황산칼슘 실사 재고', sub: '가나식품 냉장 · 상온창고', url: 'stock_count.html?kind=원자재', ref: { count: '원자재' } }
+  ],
+
   outTypes: ['주문 출고', '홀딩스 출고', '원자재출고', '부자재출고', '계열사 완제품출고', '기타출고(환·반품)'],
 
   /* 출고 품목 lots : 선입선출 순서 (오래된 LOT 먼저 · 실제로는 ERP 재고에서 LOT 순으로 배정) */
@@ -146,6 +162,32 @@ window.PdaQuery = (function () {
       return r;
     },
     findStockByEan: function (ean) { for (var k in D.stock) if (D.stock[k].ean === ean) return k; return null; },
+    // 홈 대시보드 : 구분(전체 · 원부자재 · 완제품)별 수치
+    dash: function (g) {
+      var G = D.groupOf, all = g === '전체';
+      var ins = inboundList().filter(function (r) { return all || G.inbound[r.cat] === g; });
+      var outs = this.outbound().filter(function (o) { return all || G.outbound[o.type] === g; });
+      var self = this, kinds = Object.keys(D.stock).filter(function (k) { return all || G.stock[k] === g; });
+      return {
+        inWait: ins.length, inPart: ins.filter(function (r) { return r.received > 0; }).length,
+        outWait: outs.filter(function (o) { return o.status !== '출고완료'; }).length, outDone: outs.filter(function (o) { return o.status === '출고완료'; }).length,
+        stockItems: kinds.length,
+        stockQty: kinds.reduce(function (a, k) { var s = self.stock(k); return a + s.locs.concat(s.ext).reduce(function (x, l) { return x + l.qty; }, 0); }, 0)
+      };
+    },
+    // 배정 업무 중 아직 안 끝난 것
+    tasks: function (g) {
+      var self = this, cnt = S.get('stockCount', {});
+      return D.tasks.filter(function (t) {
+        if (g !== '전체' && t.group !== g) return false;
+        var r = t.ref;
+        if (r.pk) return self.findPk(r.pk).some(function (o) { return o.status !== '출고완료'; });
+        if (r.ts) { var o = self.findOut(r.ts); return o && o.status !== '출고완료'; }
+        if (r.inId) return !!self.findIn(r.inId);
+        if (r.count) return !cnt[r.count];
+        return true;
+      });
+    },
     counts: function () {
       var o = this.outbound();
       return { inWait: inboundList().length, outWait: o.filter(function (x) { return x.status !== '출고완료'; }).length, outDone: o.filter(function (x) { return x.status === '출고완료'; }).length };

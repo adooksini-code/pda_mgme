@@ -81,11 +81,35 @@
 
   /* ========== 홈 ========== */
   P['home'] = function () {
-    var c = Q.counts();
-    $('[data-kpi="inWait"]').textContent = c.inWait;
-    $('[data-kpi="outWait"]').textContent = c.outWait;
-    $('[data-kpi="outDone"]').textContent = c.outDone;
-    $('[data-kpi="stock"]').textContent = Object.keys(D.stock).length;
+    // 숫자가 바뀔 때 굴러가듯 (0.4초)
+    function roll(el, to) {
+      var from = +(el.getAttribute('data-v') || 0), t0 = null; el.setAttribute('data-v', to);
+      if (from === to) { el.textContent = fmt(to); return; }
+      el.parentNode.classList.remove('is-pop'); void el.offsetWidth; el.parentNode.classList.add('is-pop');
+      (function step(ts) { if (!t0) t0 = ts; var k = Math.min(1, (ts - t0) / 400); el.textContent = fmt(Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3)))); if (k < 1) requestAnimationFrame(step); })(performance.now());
+      requestAnimationFrame(function step2(ts) { if (!t0) t0 = ts; });
+    }
+    var KIND = { '출고': 'outbox', '입고': 'inbox', '실사': 'count' };
+    function renderDash(g) {
+      var d = Q.dash(g);
+      roll($('[data-kpi="inWait"]'), d.inWait); roll($('[data-kpi="outWait"]'), d.outWait); roll($('[data-kpi="stock"]'), d.stockItems);
+      $('[data-kpi-sub="in"]').textContent = d.inPart ? '부분입고 ' + d.inPart : '입고 대기';
+      $('[data-kpi-sub="out"]').textContent = '완료 ' + d.outDone;
+      $('[data-kpi-sub="stock"]').textContent = '총 ' + fmt(d.stockQty);
+      var t = Q.tasks(g);
+      $('#taskCount').innerHTML = '<b>' + t.length + '</b>건 남음';
+      $('#taskEmpty').hidden = t.length > 0; $('#taskList').hidden = !t.length;
+      $('#taskList').innerHTML = t.map(function (x) {
+        return '<a class="item task" href="' + x.url + '"><span class="task__ic task__ic--' + (KIND[x.kind] || 'inbox') + '">' + icon(KIND[x.kind] || 'inbox', 'ic--s') + '</span>' +
+          '<span class="item__body"><span class="task__title">' + esc(x.title) + '</span><span class="item__sub meta num"><span class="task__kind">' + esc(x.time) + ' ' + esc(x.kind) + '</span><span>' + esc(x.sub) + '</span></span></span>' +
+          icon('chev', 'item__chev') + '</a>';
+      }).join('');
+      try { sessionStorage.setItem('pda_dash_group', g); } catch (e) {}
+    }
+    $('#dashDate').textContent = D.today;
+    var tabs = $('#dashTabs'), g0 = 'pda_dash_group'; try { g0 = sessionStorage.getItem('pda_dash_group') || '전체'; } catch (e) { g0 = '전체'; }
+    tabs.addEventListener('tabchange', function (e) { renderDash(e.detail.value); });
+    U.selectTab(tabs, g0);
 
     if (U.params.get('scan') === '1') setTimeout(function () { window.PdaScan.open('route'); }, 300);
     $('#userName').textContent = D.user.name;
