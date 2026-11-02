@@ -84,7 +84,12 @@
   }
   function select(list, b) {
     $$('[role="tab"]', list).forEach(function (x) { x.setAttribute('aria-selected', x === b ? 'true' : 'false'); x.tabIndex = x === b ? 0 : -1; });
-    b.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    // 가로로 넘치는 칩 목록만 좌우로 맞춤 (화면 전체가 세로로 밀리지 않도록)
+    if (list.scrollWidth > list.clientWidth) {
+      var l = b.offsetLeft - list.offsetLeft, r = l + b.offsetWidth;
+      if (l < list.scrollLeft) list.scrollLeft = l - 16;
+      else if (r > list.scrollLeft + list.clientWidth) list.scrollLeft = r - list.clientWidth + 16;
+    }
     list.dispatchEvent(new CustomEvent('tabchange', { detail: { value: b.getAttribute('data-value'), el: b } }));
   }
   function selectValue(list, value) { var b = $('[role="tab"][data-value="' + value + '"]', list); if (b) select(list, b); }
