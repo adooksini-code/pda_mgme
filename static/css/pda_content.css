@@ -227,3 +227,6 @@
 .fifo__qty{flex:none;font-weight:700;color:var(--c-ink)}
 .fifo__row.is-first{color:var(--c-brand-deep);font-weight:700}
 .fifo__row.is-first .fifo__no{background:var(--c-brand)}
+
+/* 피킹리스트 출고 : 완료된 거래처는 흐리게 */
+.item.is-done .item__title,.item.is-done .item__foot{color:var(--c-ink-3)}

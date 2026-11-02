@@ -146,7 +146,7 @@
     $('#lotLabel').textContent = lotNeed ? '업체 LOT 번호' : '업체 LOT 번호 (선택)';
     var qtyStep = $('#qtyStep'), qtyIn = $('input', qtyStep);
     qtyIn.max = max; qtyIn.value = st.qty; qtyStep.setValue(st.qty);
-    $('#nextBtn').textContent = r.quality ? '품질검사' : '입고 확정';
+    $('#nextBtn').textContent = '입고 확정';
 
     function sum() { return st.locs.reduce(function (a, b) { return a + b.qty; }, 0); }
     function renderLocs() {
@@ -172,7 +172,7 @@
       $('#lotHelp').hidden = lotOk;
       $('#nextBtn').disabled = !(st.qty > 0 && ok && lotOk);
       if (st.status === '반품') $('#nextBtn').textContent = '반품 등록';
-      else $('#nextBtn').textContent = r.quality ? '품질검사' : '입고 확정';
+      else $('#nextBtn').textContent = '입고 확정';
     }
     qtyStep.addEventListener('stepchange', function (e) {
       st.qty = e.detail.value;
@@ -199,7 +199,7 @@
     $('#nextBtn').onclick = function () {
       S.set('draft', { id: r.id, qty: st.qty, lot: st.lot, locs: st.locs, status: st.status });
       if (st.status === '반품') { U.busy('반품 등록 중', null, 700).then(function () { S.set('draft', null); U.go('inbound_list.html', r.name + ' ' + st.qty + r.unit + ' 반품을 등록했습니다'); }); return; }
-      U.busy('저장 중', null, 350).then(function () { location.href = r.quality ? 'inbound_quality.html' : 'inbound_done.html'; });
+      U.busy('저장 중', null, 350).then(function () { location.href = 'inbound_done.html'; });
     };
     window.PdaPage = { onScan: function (code, ctx) {
       var known = /^(TS-|PK-|PO|VH-|IN-|EMP-)/i.test(code) || /^\d{8,14}$/.test(code);
@@ -208,48 +208,12 @@
     } };
   };
 
-  /* ========== 품질검사 ========== */
-  var SUB_QC = [ { name: '외관', std: '찢김 · 오염 없을 것' }, { name: '인쇄 상태', std: '번짐 · 오탈자 없을 것' }, { name: '규격', std: '발주 규격과 같을 것' },
-    { name: '포장상태', std: '파손 · 오염 없을 것' }, { name: '이물', std: '혼입이 없을 것' }, { name: '운반차량 청결', std: '청결할 것' } ];
+  /* 입고 등록에서 넘겨받은 값 */
   function draftItem() {
     var d = S.get('draft'), r = d && Q.findIn(d.id);
     if (!r) { r = Q.inbound()[0]; d = { id: r.id, qty: remain(r), lot: 'LOT1234567', locs: [{ name: D.warehouses[0], qty: remain(r) }], status: '입고완료' }; }
     return { d: d, r: r };
   }
-  P['inbound_quality'] = function () {
-    var x = draftItem(), r = x.r, d = x.d, photos = 0;
-    var items = r.cat === '부자재' ? SUB_QC : D.qualityItems;
-    $('#hdTitle').textContent = r.cat + ' 품질검사';
-    $('#sumHead').innerHTML = '<span class="tag">' + esc(r.cat) + '</span><span>' + esc(r.name) + (r.spec ? ' · ' + esc(r.spec) : '') + '</span>';
-    $('#sumTitle').textContent = r.partner;   // 거래처를 크게
-    $('#sumSub').className = 'summary__sub num meta'; $('#sumSub').innerHTML = meta(['발주일 ' + mmdd(r.orderDate), '입고 ' + fmt(d.qty) + r.unit, d.lot && '업체 LOT ' + d.lot.replace(/^LOT/i, '')]);
-    $('#qcList').innerHTML = items.map(function (q, i) {
-      return '<div class="item"><span class="item__body"><span class="item__title"><span>' + esc(q.name) + '</span></span><span class="item__sub">' + esc(q.std) + '</span></span>' +
-        '<div class="judge" role="radiogroup" aria-label="' + esc(q.name) + ' 판정" data-q="' + i + '">' +
-        '<button type="button" class="judge__btn" role="radio" aria-checked="true" data-v="ok">적합</button>' +
-        '<button type="button" class="judge__btn" role="radio" aria-checked="false" data-v="ng">부적합</button></div></div>';
-    }).join('');
-    function count() { return $$('.judge__btn[data-v="ng"][aria-checked="true"]').length; }
-    function update() {
-      var n = count();
-      $('#qcSum').innerHTML = n ? '<span class="badge badge--bad">부적합 ' + n + '건</span>' : '<span class="badge badge--done">전 항목 적합</span>';
-      $('#qcReason').hidden = n === 0;
-    }
-    $('#qcList').addEventListener('click', function (e) {
-      var b = e.target.closest('.judge__btn'); if (!b) return;
-      $$('.judge__btn', b.parentNode).forEach(function (x) { x.setAttribute('aria-checked', x === b ? 'true' : 'false'); });
-      update();
-    });
-    $('#photoBtn').onclick = function () { photos++; $('#photoBtn').lastChild.textContent = ' 사진 ' + photos + '장 첨부됨'; U.toast('사진을 첨부했습니다'); };
-    $('#doneBtn').onclick = function () {
-      var n = count(), reason = $('#reasonIn');
-      if (n && !reason.value.trim()) { reason.classList.add('is-bad'); reason.focus(); U.toast('부적합 사유를 입력하세요', 'err'); return; }
-      reason.classList.remove('is-bad');
-      d.qc = { ng: n, reason: reason.value.trim() }; S.set('draft', d);
-      U.busy('판정 저장 중', 'ERP 품질관리에 반영합니다', 700).then(function () { location.href = 'inbound_done.html'; });
-    };
-    update();
-  };
 
   /* ========== 입고 확정 · 라벨 ========== */
   P['inbound_done'] = function () {
@@ -258,8 +222,7 @@
     $('#hdTitle').textContent = r.menu + ' 확정';
     $('#sumHead').innerHTML = '<span class="tag">' + esc(r.cat) + '</span><span>' + esc(r.name) + (r.spec ? ' · ' + esc(r.spec) : '') + '</span>';
     $('#sumTitle').textContent = r.partner;   // 거래처를 크게
-    var qc = !r.quality ? '해당 없음' : (d.qc && d.qc.ng ? '부적합 ' + d.qc.ng + '건' : '전 항목 적합');
-    $('#doneKv').innerHTML = [['입고번호', inNo], ['발주일', r.orderDate || '-'], ['입고수량', fmt(d.qty) + r.unit], ['업체 LOT', d.lot || '없음'], ['품질검사', qc]]
+    $('#doneKv').innerHTML = [['입고번호', inNo], ['발주일', r.orderDate || '-'], ['입고수량', fmt(d.qty) + r.unit], ['업체 LOT', d.lot || '없음']]
       .map(function (k) { return '<div class="kv__row"><dt>' + k[0] + '</dt><dd class="num">' + esc(k[1]) + '</dd></div>'; }).join('');
     $('#doneLocs').innerHTML = d.locs.map(function (l) { return '<div class="item"><span class="item__lead">' + icon('pin') + '</span><span class="item__body"><span class="item__title"><span>' + esc(l.name) + '</span></span></span><span class="item__end num">' + fmt(l.qty) + r.unit + '</span></div>'; }).join('');
     $('#labelBox').innerHTML = barsSvg(inNo) + '<span class="label__code">' + inNo + '-01</span><span class="label__desc">' + esc(r.name) + '<br>' + esc(d.locs[0].name) + ' ' + fmt(d.locs[0].qty) + r.unit + '</span>';
@@ -308,7 +271,8 @@
   P['outbound_check'] = function () {
     var code = U.params.get('code') || D.outbound[0].ts, o = Q.findOut(code);
     if (!o) { $('#ocMain').hidden = true; $('#ocFoot').hidden = true; $('#ocEmpty').hidden = false; $('#ocEmptyCode').textContent = code; return; }
-    var isPk = code.toUpperCase().indexOf('PK-') === 0, checked = {}, veh = vehicleOf(o.vehicle);
+    var isPk = code.toUpperCase().indexOf('PK-') === 0, checked = {}, veh = vehicleOf(o.vehicle), fromPk = U.params.get('pk');
+    if (fromPk) { $('.hd__back').href = 'outbound_group.html?code=' + encodeURIComponent(fromPk); $$('#ocResultFoot a.btn:not(.btn--line)').forEach(function (a) { a.href = 'outbound_group.html?code=' + encodeURIComponent(fromPk); a.lastChild.textContent = '피킹리스트로'; }); }
     function showResult(already) {
       $('#ocMain').hidden = true; $('#ocFoot').hidden = true; $('#ocResult').hidden = false; $('#ocResultFoot').hidden = false;
       $('#resTitle').textContent = already ? '이미 출고 완료된 건입니다' : '출고 완료';
@@ -362,6 +326,47 @@
       if (ctx === 'item') { window.PdaScan.beep(false); U.toast('이 건에 없는 품목입니다: ' + c, 'err'); return true; }
       return false;
     } };
+  };
+
+  /* ========== 피킹리스트 출고 (전체 / 거래처별) ========== */
+  P['outbound_group'] = function () {
+    var code = (U.params.get('code') || 'PK-20241127-02').toUpperCase(), rows = Q.findPk(code);
+    if (!rows.length) { $('#pgMain').hidden = true; $('#pgEmpty').hidden = false; $('#pgEmptyCode').textContent = code; return; }
+    function left() { return rows.filter(function (o) { return o.status !== '출고완료'; }); }
+    var allBox = rows.reduce(function (a, o) { return a + boxes(o); }, 0);
+    $('#sumHead').innerHTML = '<span class="tag">피킹리스트</span><span class="num">' + esc(code) + '</span>';
+    $('#sumTitle').textContent = rows.length + '곳 · ' + fmt(allBox) + '박스';
+    $('#sumSub').innerHTML = meta([rows[0].type, rows[0].round]);
+    $('#pgPrint').href = 'print.html?doc=pk&code=' + encodeURIComponent(rows[0].ts);
+    function render() {
+      $('#pgList').innerHTML = rows.map(function (o) {
+        var done = o.status === '출고완료';
+        return '<a class="item' + (done ? ' is-done' : '') + '" href="outbound_check.html?code=' + o.ts + '&pk=' + encodeURIComponent(code) + '"><span class="item__body">' +
+          '<span class="item__title"><span>' + esc(o.customer) + '</span></span>' +
+          '<span class="item__sub meta">' + meta([o.center, o.ts]) + '</span>' +
+          '<span class="item__foot"><span style="display:flex;align-items:center;gap:6px">' + icon('truck', 'ic--s') + esc(o.vehicle) + '</span><span class="num">' + boxes(o) + '박스</span></span>' +
+          '</span>' + badgeOf(o.status) + '</a>';
+      }).join('');
+      var l = left(), lb = l.reduce(function (a, o) { return a + boxes(o); }, 0), btn = $('#allOutBtn');
+      btn.disabled = !l.length;
+      btn.textContent = l.length ? '전체 출고 (' + l.length + '곳 · ' + fmt(lb) + '박스)' : '모두 출고 완료';
+    }
+    render();
+    $('#allOutBtn').onclick = function () {
+      var l = left(); if (!l.length) return;
+      U.sheet({ title: '전체 출고', html: '<p class="item__sub" style="padding:0 20px 8px">남은 ' + l.length + '곳을 모두 출고 처리하고 배정된 차량에 상차합니다.</p>',
+        items: [{ label: '전체 출고', sub: l.map(function (o) { return o.customer; }).join(', '), icon: 'outbox', value: 'go' }], foot: '취소' }).then(function (v) {
+        if (v !== 'go') return;
+        U.busy('전체 출고 중', l.length + '곳 · ERP 출고완료로 바꿉니다', 900).then(function () {
+          var done = S.get('outDone', []); l.forEach(function (o) { if (done.indexOf(o.ts) < 0) done.push(o.ts); o.status = '출고완료'; }); S.set('outDone', done);
+          window.PdaScan.beep(true);
+          $('#pgMain').hidden = true; $('#pgResult').hidden = false; $('#pgResultFoot').hidden = false;
+          $('#pgResDesc').textContent = l.length + '곳 ' + fmt(l.reduce(function (a, o) { return a + boxes(o); }, 0)) + '박스를 출고했습니다.';
+          $('#pgResKv').innerHTML = [['피킹리스트', code]].concat(l.map(function (o) { return [o.customer, o.vehicle]; })).concat([['ERP 진행상태', '출고완료']])
+            .map(function (k) { return '<div class="kv__row"><dt>' + esc(k[0]) + '</dt><dd>' + esc(k[1]) + '</dd></div>'; }).join('');
+        });
+      });
+    };
   };
 
   /* ========== 출력 ========== */

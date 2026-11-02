@@ -4,10 +4,10 @@
    - 화면(HTML)은 네트워크 우선, 그 밖의 파일은 저장본 우선입니다.
    - 파일을 바꾸면 VERSION 값을 올려 주세요.
 ================================================== */
-var VERSION = 'pda-1.0.21-202611021620';
+var VERSION = 'pda-1.0.22-202611021630';
 var FILES = [
-  './', './index.html', './login.html', './home.html', './inbound_list.html', './inbound_reg.html', './inbound_quality.html', './inbound_done.html',
-  './outbound_picking.html', './outbound_check.html', './print.html', './stock.html', './stock_count.html', './test_barcodes.html', './manifest.webmanifest',
+  './', './index.html', './login.html', './home.html', './inbound_list.html', './inbound_reg.html', './inbound_done.html',
+  './outbound_picking.html', './outbound_group.html', './outbound_check.html', './print.html', './stock.html', './stock_count.html', './test_barcodes.html', './manifest.webmanifest',
   './static/css/pda_common.css', './static/css/pda_component.css', './static/css/pda_content.css',
   './static/js/pda_version.js', './static/js/pda_data.js', './static/js/pda_ui.js', './static/js/pda_scan.js', './static/js/pda_pages.js',
   './static/img/common/logo.svg', './static/img/pwa/icon-192.png', './static/img/pwa/icon-512.png',

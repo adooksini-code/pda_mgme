@@ -131,12 +131,13 @@
     { file: 'home.html', title: '통합 스캔 홈', group: '공통' },
     { file: 'inbound_list.html', title: '입고 대기', group: '입고' },
     { file: 'inbound_reg.html', title: '입고 등록', group: '입고' },
-    { file: 'inbound_quality.html', title: '품질검사', group: '입고' },
     { file: 'inbound_done.html', title: '입고 확정 · 라벨 출력', group: '입고' },
     { file: 'outbound_picking.html', title: '출고 · 피킹리스트', group: '출고' },
+    { file: 'outbound_group.html', title: '피킹리스트 출고', group: '출고' },
     { file: 'outbound_check.html', title: '출고 확인 · 상차', group: '출고' },
     { file: 'print.html', title: '출력', group: '출력' },
-    { file: 'stock.html', title: '재고 조회', group: '재고' }
+    { file: 'stock.html', title: '재고 조회', group: '재고' },
+    { file: 'stock_count.html', title: '실사 재고', group: '재고' }
   ];
   function initChrome() {
     var here = location.pathname.split('/').pop() || 'index.html';

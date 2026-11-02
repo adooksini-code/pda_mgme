@@ -9,7 +9,6 @@ login.html                로그인 (아이디 · 비밀번호 / 사원증 스�
 home.html                 통합 스캔 홈
 inbound_list.html         입고 대기 (구분별 필터)
 inbound_reg.html          입고 등록 (수량, 업체 LOT, 입고상태, 적재 위치 배분)
-inbound_quality.html      품질검사 (원자재 · 부자재)
 inbound_done.html         입고 확정 · 라벨 출력
 outbound_picking.html     출고 · 피킹리스트 (구분별 필터)
 outbound_check.html       출고 확인 · 상차

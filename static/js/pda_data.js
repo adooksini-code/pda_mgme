@@ -50,7 +50,7 @@ window.PDA_DATA = {
 
   /* 출고 (주문정보 관리 › 주문 출고 · 홀딩스 출고, 입출고정보 관리 › 원자재출고 등) */
   outbound: [
-    { ts: 'TS-20241127-0031', pk: 'PK-20241127-01', type: '주문 출고', customer: 'A유통 인천센터', center: '수도권남부', round: '1배차 05시', vehicle: '12가3456', status: '출고대기',
+    { ts: 'TS-20241127-0031', pk: 'PK-20241127-02', type: '주문 출고', customer: 'A유통 인천센터', center: '수도권남부', round: '1배차 05시', vehicle: '12가3456', status: '출고대기',
       items: [
         { name: '국산콩 두부 300g', ean: '8801234560016', box: 11, exp: '24.11.30', loc: '맑은물에 6 · 홀딩스 5', lots: [ { wh: '맑은물에', lot: '261024', box: 6 }, { wh: '홀딩스', lot: '261025', box: 5 } ] },
         { name: '단단한 큰두부 1kg', ean: '8801234560023', box: 8, exp: '24.11.29', loc: '맑은물에 8', lots: [ { wh: '맑은물에', lot: '261024', box: 8 } ] },
@@ -126,6 +126,8 @@ window.PdaQuery = (function () {
   return {
     outStatus: outStatus,
     outbound: function () { return D.outbound.map(function (o) { return Object.assign({}, o, { status: outStatus(o) }); }); },
+    // 피킹리스트 한 장에 묶인 거래처들
+    findPk: function (code) { code = String(code || '').toUpperCase(); return this.outbound().filter(function (o) { return o.pk === code; }); },
     findOut: function (code) { code = String(code || '').toUpperCase(); for (var i = 0; i < D.outbound.length; i++) { var o = D.outbound[i]; if (o.ts === code || o.pk === code) return Object.assign({}, o, { status: outStatus(o) }); } return null; },
     inbound: inboundList,
     findIn: function (id) { var l = inboundList(); for (var i = 0; i < l.length; i++) if (l[i].id === id) return l[i]; return null; },
