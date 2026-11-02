@@ -276,7 +276,8 @@
 
   /* ========== 출고 · 피킹리스트 ========== */
   P['outbound_picking'] = function () {
-    var list = Q.outbound(), tabs = $('#outTabs');
+    // 출고완료된 건은 목록에서 뺌 (바코드로 찍으면 완료 내역은 볼 수 있음)
+    var list = Q.outbound().filter(function (o) { return o.status !== '출고완료'; }), tabs = $('#outTabs');
     tabs.innerHTML = D.outTypes.map(function (t, i) {
       var n = list.filter(function (o) { return o.type === t; }).length;
       return '<button type="button" class="chip" role="tab" data-value="' + t + '" aria-selected="' + (i === 0) + '">' + t + '<span class="chip__n">' + n + '</span></button>';
@@ -286,7 +287,7 @@
       var rows = list.filter(function (o) { return o.type === type; });
       var total = rows.reduce(function (a, o) { return a + boxes(o); }, 0);
       $('#outCount').innerHTML = '<span class="meta"><span><b>' + rows.length + '</b>곳</span><span>' + fmt(total) + '박스</span></span>';
-      $('#outEmpty').hidden = rows.length > 0; $('#outEmptyText').textContent = '오늘 ' + type + ' 건이 없습니다';
+      $('#outEmpty').hidden = rows.length > 0; $('#outEmptyText').textContent = '남은 ' + type + ' 건이 없습니다';
       $('#outList').hidden = rows.length === 0;
       $('#outList').innerHTML = rows.map(function (o) {
         var pct = o.status === '출고완료' ? 100 : o.status === '피킹중' ? 45 : 0;

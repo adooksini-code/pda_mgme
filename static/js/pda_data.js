@@ -117,7 +117,8 @@ window.PdaQuery = (function () {
   function outStatus(o) { var done = S.get('outDone', []); return done.indexOf(o.ts) >= 0 ? '출고완료' : o.status; }
   function inboundList() {
     var done = S.get('inDone', {});
-    return D.inbound.filter(function (r) { return !done[r.id] || done[r.id] < r.ordered - r.received; })
+    // 입고가 다 끝난 건(발주량만큼 입고)은 목록에서 뺌
+    return D.inbound.filter(function (r) { return (r.received + (done[r.id] || 0)) < r.ordered; })
       .map(function (r) { var c = Object.assign({}, r); if (done[r.id]) { c.received = r.received + done[r.id]; } return c; });
   }
   return {
