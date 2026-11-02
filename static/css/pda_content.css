@@ -186,15 +186,15 @@
 .scanhint__text b{font-weight:700;padding:1px 6px;border-radius:4px;background:rgba(255,255,255,.2)}
 .scanhint__cam{width:44px;height:44px;border-radius:var(--r-m);display:flex;align-items:center;justify-content:center;color:#fff}
 .scanhint__cam:active{background:rgba(255,255,255,.18)}
-.mainmenu{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;min-height:0}
-.mainmenu__item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px 4px;border-radius:var(--r-l);background:var(--c-surface);text-align:center;transition:background .12s,transform .08s}
-.mainmenu__item:active{background:var(--c-mint);transform:scale(.98)}
-.mainmenu__ic{width:56px;height:56px;flex:none;border-radius:50%;background:var(--c-mint);color:var(--c-brand);display:flex;align-items:center;justify-content:center}
-.mainmenu__ic .ic{width:30px;height:30px}
-.mainmenu__label{font-size:22px;font-weight:700;color:var(--c-ink)}
-.mainmenu__count{display:flex;align-items:baseline;gap:2px;font-size:15px;font-weight:700;color:var(--c-ink-2);margin-top:6px}
-.mainmenu__count b{font-size:40px;line-height:1;color:var(--c-brand-deep)}
-.mainmenu__sub{font-size:13px;color:var(--c-ink-2);line-height:1.4;min-height:2.8em}
+.mainmenu{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mainmenu__item{aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 2px;border-radius:var(--r-l);background:var(--c-surface);text-align:center;transition:background .12s,transform .08s}
+.mainmenu__item:active{background:var(--c-mint);transform:scale(.97)}
+.mainmenu__ic{width:34px;height:34px;flex:none;border-radius:50%;background:var(--c-mint);color:var(--c-brand);display:flex;align-items:center;justify-content:center;margin-bottom:2px}
+.mainmenu__ic .ic{width:20px;height:20px}
+.mainmenu__label{font-size:17px;font-weight:700;color:var(--c-ink);line-height:1.2}
+.mainmenu__count{display:flex;align-items:baseline;gap:1px;font-size:13px;font-weight:700;color:var(--c-ink-2)}
+.mainmenu__count b{font-size:28px;line-height:1.05;color:var(--c-brand-deep)}
+.mainmenu__sub{display:none}
 /* 홈은 스크롤 없이 한 화면 */
 [data-page="home"] .ph__body{overflow:hidden}
 
