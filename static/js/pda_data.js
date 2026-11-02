@@ -4,6 +4,19 @@
 ================================================== */
 window.PDA_DATA = {
   user: { name: '홍길동', id: 'hong01', corp: '맑은물에', corpCode: 'MGM001' },
+
+  /* 로그인 선택 목록 (기초정보관리 › 사용자 관리 · 실제 개발 시 ERP 에서 받음) */
+  corps: [
+    { code: 'MGM001', name: '맑은물에',       users: [ { id: 'hong01', name: '홍길동' }, { id: 'kim02', name: '김민수' }, { id: 'lee03', name: '이영희' } ] },
+    { code: 'MGM009', name: '샘플홀딩스', users: [ { id: 'park01', name: '박정호' }, { id: 'choi02', name: '최지훈' } ] },
+    { code: 'MGM002', name: '가나식품',       users: [ { id: 'jung01', name: '정수빈' } ] },
+    { code: 'MGM003', name: '더큰정성',       users: [ { id: 'kang01', name: '강하늘' } ] },
+    { code: 'MGM004', name: '마바식품',       users: [ { id: 'yoon01', name: '윤서준' } ] },
+    { code: 'MGM005', name: '다라식품',       users: [ { id: 'jang01', name: '장예린' } ] },
+    { code: 'MGM006', name: '참좋은콩',       users: [ { id: 'lim01', name: '임도윤' } ] },
+    { code: 'MGM007', name: '참좋은콩제천지점', users: [ { id: 'han01', name: '한지우' } ] },
+    { code: 'MGM008', name: '힘내고',         users: [ { id: 'oh01', name: '오세훈' } ] }
+  ],
   today: '10.26',
 
   /* 입고 대기 (입출고정보 관리 › 원자재입고 · 부자재입고 · 완제품(OEM)입고 · 계열사 완제품 입고) */
@@ -120,3 +133,6 @@ window.PdaQuery = (function () {
     }
   };
 })();
+
+/* 로그인한 사용자 (로그인 화면에서 고른 값) */
+(function () { try { var u = JSON.parse(sessionStorage.getItem('pda_user') || 'null'); if (u && u.id) window.PDA_DATA.user = u; } catch (e) {} })();

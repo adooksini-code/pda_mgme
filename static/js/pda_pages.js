@@ -25,14 +25,37 @@
 
   /* ========== 로그인 ========== */
   P['login'] = function () {
-    var form = $('#loginForm'), err = $('#loginErr');
+    var form = $('#loginForm'), err = $('#loginErr'), corpSel = $('#corp'), uidSel = $('#uid');
+    var last = {}; try { last = JSON.parse(localStorage.getItem('pda_last_login') || '{}'); } catch (e) {}
+    // 업체 목록
+    corpSel.insertAdjacentHTML('beforeend', D.corps.map(function (c) { return '<option value="' + esc(c.code) + '">' + esc(c.name) + '</option>'; }).join(''));
+    function findCorp(code) { return D.corps.filter(function (c) { return c.code === code; })[0]; }
+    // 업체를 고르면 그 업체의 아이디만 보여줌
+    function fillUsers(keep) {
+      var c = findCorp(corpSel.value);
+      uidSel.innerHTML = c ? '<option value="">아이디를 선택하세요</option>' + c.users.map(function (u) { return '<option value="' + esc(u.id) + '">' + esc(u.name) + ' (' + esc(u.id) + ')</option>'; }).join('')
+                           : '<option value="">업체를 먼저 선택하세요</option>';
+      uidSel.disabled = !c;
+      if (c && c.users.length === 1) uidSel.value = c.users[0].id;
+      else if (keep && c && c.users.some(function (u) { return u.id === keep; })) uidSel.value = keep;
+    }
+    corpSel.addEventListener('change', function () { corpSel.classList.remove('is-bad'); fillUsers(); });
+    uidSel.addEventListener('change', function () { uidSel.classList.remove('is-bad'); });
+    // 지난번에 고른 업체 · 아이디 기억 (처음이면 맑은물에 · 홍길동)
+    corpSel.value = findCorp(last.corp) ? last.corp : 'MGM001';
+    fillUsers(last.uid || 'hong01');
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var empty = $$('.input', form).filter(function (i) { var bad = !i.value.trim(); i.classList.toggle('is-bad', bad); return bad; });
-      if (empty.length) { var nm = empty[0].closest('.field').querySelector('label').textContent, last = nm.charCodeAt(nm.length - 1) - 0xAC00;
-      err.textContent = nm + (last >= 0 && last % 28 ? '을' : '를') + ' 입력하세요.'; err.hidden = false; empty[0].focus(); return; }
+      if (empty.length) { var f = empty[0], nm = f.closest('.field').querySelector('label').textContent, lc = nm.charCodeAt(nm.length - 1) - 0xAC00;
+      err.textContent = nm + (lc >= 0 && lc % 28 ? '을' : '를') + (f.tagName === 'SELECT' ? ' 선택하세요.' : ' 입력하세요.'); err.hidden = false; f.focus(); return; }
       err.hidden = true;
-      U.busy('로그인 중', null, 650).then(function () { U.go('home.html', D.user.name + '님, 오늘도 안전하게 작업하세요'); });
+      var c = findCorp(corpSel.value), u = c.users.filter(function (x) { return x.id === uidSel.value; })[0];
+      var user = { name: u.name, id: u.id, corp: c.name, corpCode: c.code };
+      try { sessionStorage.setItem('pda_user', JSON.stringify(user)); localStorage.setItem('pda_last_login', JSON.stringify({ corp: c.code, uid: u.id })); } catch (x) {}
+      D.user = user;
+      U.busy('로그인 중', c.name + ' · ' + u.name, 650).then(function () { U.go('home.html', u.name + '님, 오늘도 안전하게 작업하세요'); });
     });
     window.PdaPage = { onScan: function (code, ctx) {
       if (ctx !== 'emp') return false;
@@ -52,8 +75,9 @@
     $('[data-kpi="outDone"]').textContent = c.outDone;
     if (U.params.get('scan') === '1') setTimeout(function () { window.PdaScan.open('route'); }, 300);
     $$('[data-demo-scan]').forEach(function (b) { b.onclick = function () { window.PdaScan.handle(b.getAttribute('data-demo-scan'), 'route'); }; });
+    $('#userName').textContent = D.user.name;
     $('#userBtn').onclick = function () {
-      U.sheet({ title: D.user.name + ' (' + D.user.id + ')', html: '<p class="item__sub" style="padding:0 20px 8px">' + esc(D.user.corp) + ' 업체코드 ' + esc(D.user.corpCode) + '<br>' + esc(U.verText(U.version)) + '</p>',
+      U.sheet({ title: D.user.name + ' (' + D.user.id + ')', html: '<p class="item__sub" style="padding:0 20px 8px">' + esc(D.user.corp) + ' (' + esc(D.user.corpCode) + ')' + '<br>' + esc(U.verText(U.version)) + '</p>',
         items: [{ label: '화면 목록', icon: 'list', value: 'nav' }, { label: '시연 데이터 초기화', icon: 'sync', value: 'reset' },
           { label: U.standalone ? '앱으로 실행 중' : '홈 화면에 앱 설치', icon: 'home', value: 'install' }, { label: '로그아웃', icon: 'logout', value: 'logout' }] }).then(function (v) {
         if (v === 'logout') U.busy('로그아웃 중', null, 400).then(function () { location.href = 'login.html'; });
