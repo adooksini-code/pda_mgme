@@ -107,6 +107,7 @@
     $$('[role="tab"]', tabs).forEach(function (t) {
       var v = t.getAttribute('data-value'), n = v === '전체' ? list.length : list.filter(function (r) { return r.menu === v; }).length;
       t.insertAdjacentHTML('beforeend', '<span class="chip__n">' + n + '</span>');
+      if (v !== '전체' && n === 0) t.remove();   // 처리할 건이 없는 구분은 탭에서 뺌
     });
     function render(menu) {
       var rows = list.filter(function (r) { return menu === '전체' || r.menu === menu; });
@@ -125,7 +126,7 @@
     }
     tabs.addEventListener('tabchange', function (e) { render(e.detail.value); });
     render('전체');
-    if (U.params.get('tab')) U.selectTab(tabs, U.params.get('tab'));
+    if (U.params.get('tab') && $('[data-value="' + U.params.get('tab') + '"]', tabs)) U.selectTab(tabs, U.params.get('tab'));
   };
 
   /* ========== 입고 등록 ========== */
@@ -242,7 +243,10 @@
   P['outbound_picking'] = function () {
     // 출고완료된 건은 목록에서 뺌 (바코드로 찍으면 완료 내역은 볼 수 있음)
     var list = Q.outbound().filter(function (o) { return o.status !== '출고완료'; }), tabs = $('#outTabs');
-    tabs.innerHTML = D.outTypes.map(function (t, i) {
+    // 처리할 건이 있는 구분만 탭으로
+    var types = D.outTypes.filter(function (t) { return list.some(function (o) { return o.type === t; }); });
+    tabs.hidden = !types.length;
+    tabs.innerHTML = types.map(function (t, i) {
       var n = list.filter(function (o) { return o.type === t; }).length;
       return '<button type="button" class="chip" role="tab" data-value="' + t + '" aria-selected="' + (i === 0) + '">' + t + '<span class="chip__n">' + n + '</span></button>';
     }).join('');
@@ -264,7 +268,8 @@
       }).join('');
     }
     tabs.addEventListener('tabchange', function (e) { render(e.detail.value); });
-    render(D.outTypes[0]);
+    if (types.length) render(types[0]);
+    else { $('#outCount').innerHTML = ''; $('#outList').hidden = true; $('#outEmpty').hidden = false; $('#outEmptyText').textContent = '오늘 남은 출고가 없습니다'; }
   };
 
   /* ========== 출고 확인 · 상차 ========== */
