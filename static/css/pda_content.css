@@ -196,3 +196,21 @@
 .mainmenu__sub{font-size:14px;color:var(--c-ink-2)}
 .mainmenu__count{display:flex;align-items:baseline;gap:2px;font-size:16px;font-weight:700;color:var(--c-ink-2)}
 .mainmenu__count b{font-size:36px;line-height:1;color:var(--c-brand-deep)}
+
+/* ---------- 실사 재고 ---------- */
+.countnote{display:flex;align-items:center;gap:6px;margin-top:12px;padding:8px 10px;border-radius:var(--r-m);background:var(--c-mint);color:var(--c-brand-deep);font-size:13px;font-weight:700}
+.scanhelp{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;border-radius:var(--r-m);background:var(--c-surface);color:var(--c-ink-2);font-size:13px;line-height:1.45}
+.scanhelp .ic{flex:none;margin-top:1px;color:var(--c-brand)}
+.scanhelp b{color:var(--c-ink)}
+.countrow{padding:12px 14px;display:flex;flex-direction:column;gap:10px;transition:background .15s}
+.countrow + .countrow{border-top:1px solid var(--c-line)}
+.countrow__head{display:flex;align-items:center;gap:10px;text-align:left;width:100%}
+.countrow__radio{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid #c3c9d0}
+.countrow.is-active{background:#f6fbf8}
+.countrow.is-active .countrow__radio{border-color:var(--c-brand);box-shadow:inset 0 0 0 4px #fff;background:var(--c-brand)}
+.countrow__diff{flex:none;font-size:14px;font-weight:700;color:var(--c-ink-3)}
+.countrow.is-bump{animation:bump .35s ease-out}
+@keyframes bump{0%{background:#d6efdf}100%{background:#f6fbf8}}
+.is-minus{color:var(--c-red)!important}
+.is-plus{color:var(--c-brand-deep)!important}
+.chips--wrap{flex-wrap:wrap;margin:0;padding:0;overflow:visible}

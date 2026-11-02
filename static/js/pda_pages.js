@@ -406,9 +406,12 @@
   /* ========== 재고 조회 ========== */
   P['stock'] = function () {
     var ean = U.params.get('ean'), tab = U.params.get('tab') || '원자재';
-    if (ean) { var k = Q.findStockByEan(ean); if (!k) { $('#stMain').hidden = true; $('#stEmpty').hidden = false; $('#stEmptyCode').textContent = ean; return; } tab = k; }
+    if (ean) { var k = Q.findStockByEan(ean); if (!k) { $('#stMain').hidden = true; $('#stFoot').hidden = true; $('#stEmpty').hidden = false; $('#stEmptyCode').textContent = ean; return; } tab = k; }
     function render(kind) {
-      var s = D.stock[kind];
+      var s = Q.stock(kind);
+      $('#countBtn').href = 'stock_count.html?kind=' + encodeURIComponent(kind);
+      var n = $('#countNote'); n.hidden = !s.count;
+      if (s.count) n.innerHTML = icon('count', 'ic--s') + '<span>실사 반영 ' + esc(s.count.at) + ' · ' + esc(s.count.by) + (s.count.diff ? ' · 차이 ' + (s.count.diff > 0 ? '+' : '') + fmt(s.count.diff) + ' (' + esc(s.count.reason) + ')' : ' · 차이 없음') + '</span>';
       var wh = s.locs.reduce(function (a, b) { return a + b.qty; }, 0), ex = s.ext.reduce(function (a, b) { return a + b.qty; }, 0);
       $('#sumHead').innerHTML = '<span class="tag">' + esc(s.cat) + '</span><span>' + esc(s.corp) + '</span><span>규격 ' + esc(s.spec) + '</span>';
       $('#sumTitle').textContent = s.name;
@@ -425,6 +428,68 @@
     $('#stTabs').addEventListener('tabchange', function (e) { render(e.detail.value); });
     U.selectTab($('#stTabs'), tab);
     if (ean) U.toast('상품 바코드 ' + ean, 'ok');
+  };
+
+  /* ========== 실사 재고 ========== */
+  P['stock_count'] = function () {
+    var kind = U.params.get('kind') || '원자재', s = Q.stock(kind);
+    if (!s) { U.go('stock.html'); return; }
+    var erp = D.stock[kind].locs.map(function (l) { return l.qty; });    // ERP 기준 수량
+    var real = s.locs.map(function (l) { return l.qty; });               // 실사 수량 (지난 실사값이 있으면 이어서)
+    var active = 0, reason = s.count && s.count.reason || '';
+    $('.hd__back').href = 'stock.html?tab=' + encodeURIComponent(kind);
+    $('#sumHead').innerHTML = '<span class="tag">' + esc(s.cat) + '</span><span>' + esc(s.corp) + '</span><span>규격 ' + esc(s.spec) + '</span>';
+    $('#sumTitle').textContent = s.name;
+    $('#sumSub').textContent = '바코드 ' + s.ean;
+    $('#countList').innerHTML = s.locs.map(function (l, i) {
+      return '<div class="countrow" data-i="' + i + '">' +
+        '<button type="button" class="countrow__head" data-pick="' + i + '"><span class="countrow__radio" aria-hidden="true"></span>' +
+        '<span class="item__body"><span class="item__title"><span>' + esc(l.name) + '</span></span><span class="item__sub num meta"><span>LOT ' + esc(l.lot) + '</span><span>ERP ' + fmt(erp[i]) + '</span></span></span>' +
+        '<span class="countrow__diff num" data-diff="' + i + '"></span></button>' +
+        '<div class="stepper" data-stepper data-loc="' + i + '">' +
+        '<button type="button" class="stepper__btn" data-step="-1" aria-label="줄이기">' + icon('minus') + '</button>' +
+        '<input class="stepper__input" type="number" inputmode="numeric" min="0" max="999999" value="' + real[i] + '" aria-label="' + esc(l.name) + ' 실사 수량">' +
+        '<button type="button" class="stepper__btn" data-step="1" aria-label="늘리기">' + icon('plus') + '</button></div></div>';
+    }).join('');
+    U.initSteppers($('#countList'));
+    function sum(a) { return a.reduce(function (x, y) { return x + y; }, 0); }
+    function sign(n) { return (n > 0 ? '+' : '') + fmt(n); }
+    function refresh() {
+      var d = sum(real) - sum(erp);
+      $('#figErp').textContent = fmt(sum(erp)); $('#figReal').textContent = fmt(sum(real));
+      $('#figDiff').textContent = d ? sign(d) : '0';
+      $('#figDiff').className = 'figures__value' + (d < 0 ? ' is-minus' : d > 0 ? ' is-plus' : '');
+      real.forEach(function (v, i) { var x = v - erp[i], e = $('[data-diff="' + i + '"]'); e.textContent = x ? sign(x) : '일치'; e.className = 'countrow__diff num' + (x < 0 ? ' is-minus' : x > 0 ? ' is-plus' : ''); });
+      $$('.countrow').forEach(function (r, i) { r.classList.toggle('is-active', i === active); });
+      $('#reasonSec').hidden = !d && real.every(function (v, i) { return v === erp[i]; });
+      $('#saveBtn').textContent = $('#reasonSec').hidden ? '차이 없음으로 저장' : '실사 재고 저장';
+    }
+    $('#countList').addEventListener('stepchange', function (e) { var st = e.target.closest('[data-loc]'); var i = +st.getAttribute('data-loc'); real[i] = e.detail.value; active = i; refresh(); });
+    $('#countList').addEventListener('click', function (e) { var b = e.target.closest('[data-pick]'); if (b) { active = +b.getAttribute('data-pick'); refresh(); } });
+    var rt = $('#reasonTabs'); U.initTabs(rt.parentNode);
+    $$('[role="tab"]', rt).forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-value') === reason ? 'true' : 'false'); });
+    rt.addEventListener('tabchange', function (e) { reason = e.detail.value; $('#reasonErr').hidden = true; });
+    refresh();
+
+    // PDA SCAN : 같은 품목 바코드면 고른 위치에 +1
+    window.PdaPage = { onScan: function (code) {
+      if (code !== s.ean) return false;
+      var st = $('[data-loc="' + active + '"]'); st.setValue(real[active] + 1);
+      window.PdaScan.beep(true);
+      var row = $('.countrow[data-i="' + active + '"]'); row.classList.remove('is-bump'); void row.offsetWidth; row.classList.add('is-bump');
+      return true;
+    } };
+
+    $('#saveBtn').onclick = function () {
+      var d = sum(real) - sum(erp), changed = !$('#reasonSec').hidden;
+      if (changed && !reason) { $('#reasonErr').hidden = false; $('#reasonSec').scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+      var now = new Date(), at = (now.getMonth() + 1 + '').padStart(2, '0') + '.' + (now.getDate() + '').padStart(2, '0') + ' ' + (now.getHours() + '').padStart(2, '0') + ':' + (now.getMinutes() + '').padStart(2, '0');
+      var all = S.get('stockCount', {}); all[kind] = { qty: real.slice(), diff: d, reason: changed ? reason : '', at: at, by: D.user.name };
+      S.set('stockCount', all);
+      U.busy('실사 재고 저장 중', 'ERP 재고 조정으로 보냅니다', 700).then(function () {
+        U.go('stock.html?tab=' + encodeURIComponent(kind), changed ? '실사 재고를 저장했습니다 (차이 ' + sign(d) + ')' : '실사 결과 ERP 재고와 같습니다');
+      });
+    };
   };
 
   document.addEventListener('DOMContentLoaded', function () {

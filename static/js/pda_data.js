@@ -127,6 +127,14 @@ window.PdaQuery = (function () {
     findOut: function (code) { code = String(code || '').toUpperCase(); for (var i = 0; i < D.outbound.length; i++) { var o = D.outbound[i]; if (o.ts === code || o.pk === code) return Object.assign({}, o, { status: outStatus(o) }); } return null; },
     inbound: inboundList,
     findIn: function (id) { var l = inboundList(); for (var i = 0; i < l.length; i++) if (l[i].id === id) return l[i]; return null; },
+    // 재고 (실사 저장분이 있으면 그 수량으로)
+    stock: function (kind) {
+      var s = D.stock[kind], c = S.get('stockCount', {})[kind];
+      if (!s) return null;
+      var r = Object.assign({}, s);
+      if (c) { r.locs = s.locs.map(function (l, i) { return Object.assign({}, l, { qty: c.qty[i] != null ? c.qty[i] : l.qty }); }); r.count = c; }
+      return r;
+    },
     findStockByEan: function (ean) { for (var k in D.stock) if (D.stock[k].ean === ean) return k; return null; },
     counts: function () {
       var o = this.outbound();
