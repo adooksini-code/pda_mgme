@@ -76,6 +76,15 @@
     $('[data-kpi="inWait"]').textContent = c.inWait;
     $('[data-kpi="outWait"]').textContent = c.outWait;
     $('[data-kpi="outDone"]').textContent = c.outDone;
+    $('[data-kpi="stock"]').textContent = Object.keys(D.stock).length;
+    // 업무 버튼 3개가 첫 화면을 꽉 채우도록 (스캔 시연은 아래로 내려야 보임)
+    var mm = $('.mainmenu'), body = $('.ph__body');
+    function fitMenu() {
+      var top = mm.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop;
+      var h = body.clientHeight - top - 16;
+      mm.style.minHeight = Math.max(330, h) + 'px';
+    }
+    fitMenu(); window.addEventListener('resize', fitMenu);
     if (U.params.get('scan') === '1') setTimeout(function () { window.PdaScan.open('route'); }, 300);
     $$('[data-demo-scan]').forEach(function (b) { b.onclick = function () { window.PdaScan.handle(b.getAttribute('data-demo-scan'), 'route'); }; });
     $('#userName').textContent = D.user.name;
