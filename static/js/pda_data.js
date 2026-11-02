@@ -21,11 +21,11 @@ window.PDA_DATA = {
 
   /* 입고 대기 (입출고정보 관리 › 원자재입고 · 부자재입고 · 완제품(OEM)입고 · 계열사 완제품 입고) */
   inbound: [
-    { id: 'PO12093719874', orderDate: '2026-10-22', cat: '원자재', menu: '원자재입고', name: '국산 대두(가공용)', spec: '20kg', unit: '포', partner: '㈜대한농산', ordered: 100, received: 0, quality: true },
-    { id: 'PO12093719880', orderDate: '2026-10-23', cat: '원자재', menu: '원자재입고', name: '황산칼슘', spec: '25kg', unit: '포', partner: '㈜해양소재', ordered: 40, received: 20, quality: true },
-    { id: 'PO12093719902', orderDate: '2026-10-21', cat: '부자재', menu: '부자재입고', name: '두부 포장필름 300g용', spec: '1롤', unit: '롤', partner: '㈜그린팩', ordered: 50, received: 0, quality: true },
-    { id: 'PO12093719915', orderDate: '2026-10-24', cat: '부자재', menu: '부자재입고', name: '두부 트레이 300g', spec: '1,000개', unit: '박스', partner: '㈜그린팩', ordered: 30, received: 0, quality: true },
-    { id: 'PO12093719930', orderDate: '2026-10-25', cat: '완제품(OEM)', menu: '완제품(OEM)입고', name: '국산콩 순두부 350g', spec: '12입', unit: '박스', partner: '㈜바른식품', ordered: 80, received: 0, quality: false },
+    { id: 'PO12093719874', ean: '8809876543206', orderDate: '2026-10-22', cat: '원자재', menu: '원자재입고', name: '국산 대두(가공용)', spec: '20kg', unit: '포', partner: '㈜대한농산', ordered: 100, received: 0, quality: true },
+    { id: 'PO12093719880', ean: '8809876543213', orderDate: '2026-10-23', cat: '원자재', menu: '원자재입고', name: '황산칼슘', spec: '25kg', unit: '포', partner: '㈜해양소재', ordered: 40, received: 20, quality: true },
+    { id: 'PO12093719902', ean: '8809876543220', orderDate: '2026-10-21', cat: '부자재', menu: '부자재입고', name: '두부 포장필름 300g용', spec: '1롤', unit: '롤', partner: '㈜그린팩', ordered: 50, received: 0, quality: true },
+    { id: 'PO12093719915', ean: '8809876543237', orderDate: '2026-10-24', cat: '부자재', menu: '부자재입고', name: '두부 트레이 300g', spec: '1,000개', unit: '박스', partner: '㈜그린팩', ordered: 30, received: 0, quality: true },
+    { id: 'PO12093719930', ean: '8801234560054', orderDate: '2026-10-25', cat: '완제품(OEM)', menu: '완제품(OEM)입고', name: '국산콩 순두부 350g', spec: '12입', unit: '박스', partner: '㈜바른식품', ordered: 80, received: 0, quality: false },
     { id: 'VH-20261026-2058', orderDate: '2026-10-26', cat: '계열사 완제품', menu: '계열사 완제품 입고', name: '국산콩 두부 300g 외 3건', spec: '차량 1대', unit: '박스', partner: '가나식품', vehicle: '12가3456', ordered: 96, received: 0, quality: false }
   ],
 
@@ -131,6 +131,12 @@ window.PdaQuery = (function () {
     findOut: function (code) { code = String(code || '').toUpperCase(); for (var i = 0; i < D.outbound.length; i++) { var o = D.outbound[i]; if (o.ts === code || o.pk === code) return Object.assign({}, o, { status: outStatus(o) }); } return null; },
     inbound: inboundList,
     findIn: function (id) { var l = inboundList(); for (var i = 0; i < l.length; i++) if (l[i].id === id) return l[i]; return null; },
+    // 품목 바코드(EAN) 또는 발주번호로 남은 입고 건 찾기 · 여러 건이면 발주일이 빠른 것
+    findInByCode: function (code) {
+      var l = inboundList().filter(function (r) { return r.id === code || (r.ean && r.ean === code); });
+      l.sort(function (a, b) { return String(a.orderDate).localeCompare(String(b.orderDate)); });
+      return l[0] || null;
+    },
     // 재고 (실사 저장분이 있으면 그 수량으로)
     stock: function (kind) {
       var s = D.stock[kind], c = S.get('stockCount', {})[kind];

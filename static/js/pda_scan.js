@@ -15,7 +15,7 @@
   var RULES = [
     { test: function (u) { return u.indexOf('TS-') === 0; },  label: '거래명세표',  url: function (c) { return 'outbound_check.html?code=' + encodeURIComponent(c); } },
     { test: function (u) { return u.indexOf('PK-') === 0; },  label: '피킹리스트',  url: function (c) { return 'outbound_group.html?code=' + encodeURIComponent(c); } },
-    { test: function (u) { return u.indexOf('PO') === 0 || u.indexOf('VH-') === 0; }, label: '입고 건', url: function (c) { return 'inbound_reg.html?id=' + encodeURIComponent(c); } },
+    { test: function (u) { return u.indexOf('PO') === 0 || u.indexOf('VH-') === 0; }, label: '입고 건', url: function (c) { return 'inbound_reg.html?id=' + encodeURIComponent(c) + '&by=scan'; } },
     { test: function (u) { return u.indexOf('IN-') === 0; },  label: '입고 라벨',   url: function () { return 'stock.html?tab=원자재'; } },
     { test: function (u) { return u.indexOf('EMP-') === 0; }, label: '사원증',      url: function () { return 'home.html'; } },
     { test: function (u) { return /^\d{8,14}$/.test(u); },     label: '상품 바코드', url: function (c) { return 'stock.html?ean=' + encodeURIComponent(c); } }

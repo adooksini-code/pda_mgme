@@ -126,6 +126,12 @@
     }
     tabs.addEventListener('tabchange', function (e) { render(e.detail.value); });
     render('전체');
+    window.PdaPage = { onScan: function (code) {
+      var hit = Q.findInByCode(code); if (!hit) return false;
+      window.PdaScan.beep(true);
+      U.busy('입고 건 불러오는 중', hit.partner + ' · ' + hit.name, 300).then(function () { location.href = 'inbound_reg.html?id=' + encodeURIComponent(hit.id) + '&by=scan'; });
+      return true;
+    } };
     if (U.params.get('tab') && $('[data-value="' + U.params.get('tab') + '"]', tabs)) U.selectTab(tabs, U.params.get('tab'));
   };
 
@@ -133,7 +139,7 @@
   P['inbound_reg'] = function () {
     var r = Q.findIn(U.params.get('id')) || Q.inbound()[0];
     if (!r) { $('#regMain').hidden = true; $('#regEmpty').hidden = false; return; }
-    var max = remain(r), lotNeed = r.quality;
+    var max = remain(r), lotNeed = false;   // LOT 는 선택 (찍으면 기록)
     var st = { qty: max, lot: '', status: '입고완료', locs: [{ name: D.warehouses[0], qty: max }] };
     var draft = S.get('draft'); if (draft && draft.id === r.id) { st.qty = draft.qty; st.lot = draft.lot; st.locs = draft.locs; st.status = draft.status; }
 
@@ -194,7 +200,7 @@
         .then(function (w) { if (!w) return; st.locs.push({ name: w, qty: Math.max(0, st.qty - sum()) }); renderLocs(); U.toast(w + ' 위치를 추가했습니다'); });
     };
     $('#statusTabs').addEventListener('tabchange', function (e) { st.status = e.detail.value; check(); });
-    function setLot(v) { st.lot = v; var el = $('#lotValue'); el.textContent = v || '탭하여 업체 LOT 바코드 스캔'; el.classList.toggle('is-empty', !v); check(); }
+    function setLot(v) { st.lot = v; var el = $('#lotValue'); el.textContent = v || 'LOT 바코드를 SCAN하면 입력됩니다'; el.classList.toggle('is-empty', !v); check(); }
     setLot(st.lot); U.selectTab($('#statusTabs'), st.status); renderLocs();
 
     $('#nextBtn').onclick = function () {
@@ -202,7 +208,14 @@
       if (st.status === '반품') { U.busy('반품 등록 중', null, 700).then(function () { S.set('draft', null); U.go('inbound_list.html', r.name + ' ' + st.qty + r.unit + ' 반품을 등록했습니다'); }); return; }
       U.busy('저장 중', null, 350).then(function () { location.href = 'inbound_done.html'; });
     };
+    if (U.params.get('by') === 'scan') U.toast('수량을 확인하고 입고 확정을 누르세요', 'ok');
     window.PdaPage = { onScan: function (code, ctx) {
+      var hit = ctx !== 'lot' && Q.findInByCode(code);
+      if (hit) {
+        window.PdaScan.beep(true);
+        if (hit.id === r.id) { U.toast('지금 화면의 품목입니다. 입고 확정을 누르세요', 'ok'); return true; }
+        location.href = 'inbound_reg.html?id=' + encodeURIComponent(hit.id) + '&by=scan'; return true;
+      }
       var known = /^(TS-|PK-|PO|VH-|IN-|EMP-)/i.test(code) || /^\d{8,14}$/.test(code);
       if (ctx !== 'lot' && known) return false;
       window.PdaScan.beep(true); setLot(code); U.toast('업체 LOT ' + code + ' 입력', 'ok'); return true;
