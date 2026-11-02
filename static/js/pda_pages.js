@@ -139,7 +139,7 @@
   P['inbound_reg'] = function () {
     var r = Q.findIn(U.params.get('id')) || Q.inbound()[0];
     if (!r) { $('#regMain').hidden = true; $('#regEmpty').hidden = false; return; }
-    var max = remain(r), lotNeed = false;   // LOT 는 선택 (찍으면 기록)
+    var max = remain(r);
     var st = { qty: max, lot: '', status: '입고완료', locs: [{ name: D.warehouses[0], qty: max }] };
     var draft = S.get('draft'); if (draft && draft.id === r.id) { st.qty = draft.qty; st.lot = draft.lot; st.locs = draft.locs; st.status = draft.status; }
 
@@ -150,7 +150,6 @@
     $('#figOrdered').innerHTML = fmt(r.ordered) + '<small>' + r.unit + '</small>';
     $('#figReceived').innerHTML = fmt(r.received) + '<small>' + r.unit + '</small>';
     $$('[data-unit]').forEach(function (e) { e.textContent = r.unit; });
-    $('#lotLabel').textContent = lotNeed ? '업체 LOT 번호' : '업체 LOT 번호 (선택)';
     var qtyStep = $('#qtyStep'), qtyIn = $('input', qtyStep);
     qtyIn.max = max; qtyIn.value = st.qty; qtyStep.setValue(st.qty);
     $('#nextBtn').textContent = '입고 확정';
@@ -175,9 +174,7 @@
       var h = $('#locHelp');
       h.textContent = ok ? '배분 합계 ' + fmt(s) + r.unit + ', 입고수량과 같습니다' : '배분 합계 ' + fmt(s) + r.unit + ' / 입고수량 ' + fmt(st.qty) + r.unit + ', 수량을 맞춰주세요';
       h.className = 'field__help ' + (ok ? 'is-ok' : 'is-bad');
-      var lotOk = !lotNeed || !!st.lot || st.status === '반품';
-      $('#lotHelp').hidden = lotOk;
-      $('#nextBtn').disabled = !(st.qty > 0 && ok && lotOk);
+      $('#nextBtn').disabled = !(st.qty > 0 && ok);
       if (st.status === '반품') $('#nextBtn').textContent = '반품 등록';
       else $('#nextBtn').textContent = '입고 확정';
     }
@@ -200,8 +197,7 @@
         .then(function (w) { if (!w) return; st.locs.push({ name: w, qty: Math.max(0, st.qty - sum()) }); renderLocs(); U.toast(w + ' 위치를 추가했습니다'); });
     };
     $('#statusTabs').addEventListener('tabchange', function (e) { st.status = e.detail.value; check(); });
-    function setLot(v) { st.lot = v; var el = $('#lotValue'); el.textContent = v || 'LOT 바코드를 SCAN하면 입력됩니다'; el.classList.toggle('is-empty', !v); check(); }
-    setLot(st.lot); U.selectTab($('#statusTabs'), st.status); renderLocs();
+    U.selectTab($('#statusTabs'), st.status); renderLocs();
 
     $('#nextBtn').onclick = function () {
       S.set('draft', { id: r.id, qty: st.qty, lot: st.lot, locs: st.locs, status: st.status });
@@ -210,15 +206,13 @@
     };
     if (U.params.get('by') === 'scan') U.toast('수량을 확인하고 입고 확정을 누르세요', 'ok');
     window.PdaPage = { onScan: function (code, ctx) {
-      var hit = ctx !== 'lot' && Q.findInByCode(code);
+      var hit = Q.findInByCode(code);
       if (hit) {
         window.PdaScan.beep(true);
         if (hit.id === r.id) { U.toast('지금 화면의 품목입니다. 입고 확정을 누르세요', 'ok'); return true; }
         location.href = 'inbound_reg.html?id=' + encodeURIComponent(hit.id) + '&by=scan'; return true;
       }
-      var known = /^(TS-|PK-|PO|VH-|IN-|EMP-)/i.test(code) || /^\d{8,14}$/.test(code);
-      if (ctx !== 'lot' && known) return false;
-      window.PdaScan.beep(true); setLot(code); U.toast('업체 LOT ' + code + ' 입력', 'ok'); return true;
+      return false;
     } };
   };
 
@@ -236,7 +230,7 @@
     $('#hdTitle').textContent = r.menu + ' 확정';
     $('#sumHead').innerHTML = '<span class="tag">' + esc(r.cat) + '</span><span>' + esc(r.name) + (r.spec ? ' · ' + esc(r.spec) : '') + '</span>';
     $('#sumTitle').textContent = r.partner;   // 거래처를 크게
-    $('#doneKv').innerHTML = [['입고번호', inNo], ['발주일', r.orderDate || '-'], ['입고수량', fmt(d.qty) + r.unit], ['업체 LOT', d.lot || '없음']]
+    $('#doneKv').innerHTML = [['입고번호', inNo], ['발주일', r.orderDate || '-'], ['입고수량', fmt(d.qty) + r.unit]]
       .map(function (k) { return '<div class="kv__row"><dt>' + k[0] + '</dt><dd class="num">' + esc(k[1]) + '</dd></div>'; }).join('');
     $('#doneLocs').innerHTML = d.locs.map(function (l) { return '<div class="item"><span class="item__lead">' + icon('pin') + '</span><span class="item__body"><span class="item__title"><span>' + esc(l.name) + '</span></span></span><span class="item__end num">' + fmt(l.qty) + r.unit + '</span></div>'; }).join('');
     $('#labelBox').innerHTML = barsSvg(inNo) + '<span class="label__code">' + inNo + '-01</span><span class="label__desc">' + esc(r.name) + '<br>' + esc(d.locs[0].name) + ' ' + fmt(d.locs[0].qty) + r.unit + '</span>';
