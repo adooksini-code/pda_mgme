@@ -247,7 +247,7 @@
 
     $('#nextBtn').onclick = function () {
       S.set('draft', { id: r.id, qty: st.qty, lot: st.lot, locs: st.locs, status: st.status, qc: st.qc, qcMemo: st.qcMemo });
-      if (st.status === '반품') { U.busy('반품 등록 중', null, 700).then(function () { S.set('draft', null); U.go('inbound_list.html', r.name + ' ' + st.qty + r.unit + ' 반품을 등록했습니다'); }); return; }
+      if (st.status === '반품') { U.busy('반품 등록 중', null, 700).then(function () { S.set('draft', null); U.go('inbound_list.html', r.partner + ' · ' + r.name + ' ' + st.qty + r.unit + ' 반품을 등록했습니다'); }); return; }
       U.busy('저장 중', null, 350).then(function () { location.href = 'inbound_done.html'; });
     };
     if (U.params.get('by') === 'scan') U.toast('수량을 확인하고 입고 확정을 누르세요', 'ok');
@@ -284,7 +284,7 @@
     // 입고 라벨 : 출력하지 않고, 필요할 때 [입고 라벨 보기]로 확인 (적재 위치마다 1장)
     var labels = d.locs.map(function (l, i) {
       var no = inNo + '-' + String(i + 1).padStart(2, '0');
-      return '<div class="label" style="margin:0 20px 10px">' + barsSvg(no) + '<span class="label__code">' + no + '</span><span class="label__desc">' + esc(r.name) + '<br>' + esc(l.name) + ' ' + fmt(l.qty) + r.unit + '</span></div>';
+      return '<div class="label" style="margin:0 20px 10px">' + barsSvg(no) + '<span class="label__code">' + no + '</span><span class="label__desc"><b>' + esc(r.partner) + '</b><br>' + esc(r.name) + ' · ' + esc(l.name) + ' ' + fmt(l.qty) + r.unit + '</span></div>';
     }).join('');
     $('#labelBtn').onclick = function () { U.sheet({ title: '입고 라벨 ' + d.locs.length + '장', html: labels, items: [], foot: '닫기' }); };
     $('#confirmBtn').onclick = function () {
@@ -361,7 +361,7 @@
     $('#itemList').innerHTML = o.items.map(function (it, i) {
       return '<div class="oitem" data-i="' + i + '">' +
         '<button type="button" class="item oitem__head" data-toggle="' + i + '" aria-pressed="false"><span class="check">' + icon('check') + '</span>' +
-        '<span class="item__body"><span class="item__corp">' + esc(corpOf(it)) + '</span><span class="item__title"><span>' + esc(it.name) + '</span></span>' +
+        '<span class="item__body"><span class="item__corp">' + esc(corpOf(it)) + '</span><span class="item__title item__title--light"><span>' + esc(it.name) + '</span></span>' +
         '<span class="item__sub">소비기한 ' + esc(it.exp) + '</span>' + fifoHtml(it.lots, '박스') + '</span>' +
         '<span class="item__end num"><span data-q="' + i + '">' + it.box + '</span><small>박스</small><em class="oitem__plan" data-plan="' + i + '" hidden></em></span></button>' +
         '<div class="oitem__qty" data-edit="' + i + '" hidden><span class="oitem__label">출고수량</span>' +
@@ -474,12 +474,12 @@
       (o.items.length > 2 ? '<div class="kv__row"><dt>외 ' + (o.items.length - 2) + '품목</dt><dd class="num">' + o.items.slice(2).reduce(function (a, b) { return a + b.box; }, 0) + '박스</dd></div>' : '');
     var veh = vehicleOf(o.vehicle);
     $('#pvTs').innerHTML = '<h3 class="paper__title">거래명세서</h3><p class="paper__no num">No. ' + o.ts + '</p><dl class="kv">' +
-      [['공급자', '맑은물에'], ['공급받는자', o.customer], ['출고일', '2024-11-27'], ['배송차량', veh.plate]].map(function (k) { return '<div class="kv__row"><dt>' + k[0] + '</dt><dd>' + esc(k[1]) + '</dd></div>'; }).join('') +
+      [['공급받는자', o.customer], ['공급자', '맑은물에'], ['출고일', '2024-11-27'], ['배송차량', veh.plate]].map(function (k) { return '<div class="kv__row"><dt>' + k[0] + '</dt><dd' + (k[0] === '공급받는자' ? ' class="is-strong"' : '') + '>' + esc(k[1]) + '</dd></div>'; }).join('') +
       '</dl><span class="paper__line"></span><dl class="kv">' + items + '</dl><span class="paper__line"></span><dl class="kv"><div class="kv__row"><dt>합계</dt><dd class="num">' + boxes(o) + '박스</dd></div></dl>';
     $('#pvPk').innerHTML = '<h3 class="paper__title">피킹리스트</h3><p class="paper__no num">No. ' + o.pk + '</p><dl class="kv">' +
-      [['거래처', o.customer], ['센터', o.center], ['배차', o.round], ['배송차량', veh.plate]].map(function (k) { return '<div class="kv__row"><dt>' + k[0] + '</dt><dd>' + esc(k[1]) + '</dd></div>'; }).join('') +
+      [['거래처', o.customer], ['센터', o.center], ['배차', o.round], ['배송차량', veh.plate]].map(function (k) { return '<div class="kv__row"><dt>' + k[0] + '</dt><dd' + (k[0] === '거래처' ? ' class="is-strong"' : '') + '>' + esc(k[1]) + '</dd></div>'; }).join('') +
       '</dl><span class="paper__line"></span><dl class="kv">' + o.items.map(function (it) { return '<div class="kv__row"><dt>' + esc(it.name) + '</dt><dd class="num">' + it.box + '</dd></div>'; }).join('') + '</dl>';
-    $('#pvLabel').innerHTML = '<div class="label">' + barsSvg('IN-20261026-0012') + '<span class="label__code">IN-20261026-0012-01</span><span class="label__desc">국산 대두(가공용)<br>맑은물에 냉장창고 60포</span></div>';
+    $('#pvLabel').innerHTML = '<div class="label">' + barsSvg('IN-20261026-0012') + '<span class="label__code">IN-20261026-0012-01</span><span class="label__desc"><b>㈜대한농산</b><br>국산 대두(가공용) · 맑은물에 냉장창고 60포</span></div>';
     var names = { ts: '거래명세표', pk: '피킹리스트', label: '입고 라벨' };
     var cur = doc;
     $('#docTabs').addEventListener('tabchange', function (e) {

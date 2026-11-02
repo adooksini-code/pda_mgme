@@ -87,10 +87,10 @@ window.PDA_DATA = {
 
   /* 오늘 나에게 배정된 업무 (실제로는 ERP 작업지시 · 담당자 기준) */
   tasks: [
-    { kind: '출고', group: '완제품',   time: '05:00', title: '피킹리스트 PK-20241127-02', sub: 'A유통 인천센터 외 1곳 · 1배차', url: 'outbound_group.html?code=PK-20241127-02', ref: { pk: 'PK-20241127-02' } },
-    { kind: '입고', group: '원부자재', time: '09:00', title: '㈜대한농산 · 국산 대두(가공용)', sub: '100포 · 발주일 10.22', url: 'inbound_reg.html?id=PO12093719874', ref: { inId: 'PO12093719874' } },
-    { kind: '출고', group: '원부자재', time: '10:00', title: '가나식품 생산동 원자재출고', sub: '국산 대두 외 1건 · 원료 투입', url: 'outbound_check.html?code=TS-20241127-0051', ref: { ts: 'TS-20241127-0051' } },
-    { kind: '입고', group: '완제품',   time: '13:00', title: '가나식품 차량별 입고', sub: '96박스 · 12가3456', url: 'inbound_reg.html?id=VH-20261026-2058', ref: { inId: 'VH-20261026-2058' } },
+    { kind: '출고', group: '완제품',   time: '05:00', title: 'A유통 인천센터 외 1곳', sub: '피킹리스트 PK-20241127-02 · 1배차', url: 'outbound_group.html?code=PK-20241127-02', ref: { pk: 'PK-20241127-02' } },
+    { kind: '입고', group: '원부자재', time: '09:00', title: '㈜대한농산', sub: '국산 대두(가공용) 100포 · 발주일 10.22', url: 'inbound_reg.html?id=PO12093719874', ref: { inId: 'PO12093719874' } },
+    { kind: '출고', group: '원부자재', time: '10:00', title: '가나식품 생산동', sub: '원자재출고 · 국산 대두 외 1건', url: 'outbound_check.html?code=TS-20241127-0051', ref: { ts: 'TS-20241127-0051' } },
+    { kind: '입고', group: '완제품',   time: '13:00', title: '가나식품', sub: '차량별 입고 · 96박스 · 12가3456', url: 'inbound_reg.html?id=VH-20261026-2058', ref: { inId: 'VH-20261026-2058' } },
     { kind: '실사', group: '원부자재', time: '16:00', title: '황산칼슘 실사 재고', sub: '가나식품 냉장 · 상온창고', url: 'stock_count.html?kind=원자재', ref: { count: '원자재' } }
   ],
 

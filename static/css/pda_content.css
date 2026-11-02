@@ -270,3 +270,8 @@
 
 /* 출고 품목 : 업체명 강조 */
 .item__corp{display:inline-flex;align-self:flex-start;align-items:center;height:22px;padding:0 8px;margin-bottom:4px;border-radius:11px;background:var(--c-brand);color:#fff;font-size:12px;font-weight:700}
+
+/* 거래처 강조 · 품목명은 한 단계 낮춤 */
+.item__title--light{font-weight:500!important;font-size:15px}
+.kv dd.is-strong{font-size:16px;font-weight:700;color:var(--c-ink)}
+.label__desc b{font-size:14px;color:var(--c-ink)}
