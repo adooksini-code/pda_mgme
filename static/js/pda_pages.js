@@ -257,14 +257,17 @@
     $('#doneKv').innerHTML = [['입고번호', inNo], ['발주일', r.orderDate || '-'], ['입고수량', fmt(d.qty) + r.unit]]
       .map(function (k) { return '<div class="kv__row"><dt>' + k[0] + '</dt><dd class="num">' + esc(k[1]) + '</dd></div>'; }).join('');
     $('#doneLocs').innerHTML = d.locs.map(function (l) { return '<div class="item"><span class="item__lead">' + icon('pin') + '</span><span class="item__body"><span class="item__title"><span>' + esc(l.name) + '</span></span></span><span class="item__end num">' + fmt(l.qty) + r.unit + '</span></div>'; }).join('');
-    $('#labelBox').innerHTML = barsSvg(inNo) + '<span class="label__code">' + inNo + '-01</span><span class="label__desc">' + esc(r.name) + '<br>' + esc(d.locs[0].name) + ' ' + fmt(d.locs[0].qty) + r.unit + '</span>';
-    var cp = $('#copyStep'); $('input', cp).value = d.locs.length; cp.setValue(d.locs.length);
+    // 입고 라벨 : 출력하지 않고, 필요할 때 [입고 라벨 보기]로 확인 (적재 위치마다 1장)
+    var labels = d.locs.map(function (l, i) {
+      var no = inNo + '-' + String(i + 1).padStart(2, '0');
+      return '<div class="label" style="margin:0 20px 10px">' + barsSvg(no) + '<span class="label__code">' + no + '</span><span class="label__desc">' + esc(r.name) + '<br>' + esc(l.name) + ' ' + fmt(l.qty) + r.unit + '</span></div>';
+    }).join('');
+    $('#labelBtn').onclick = function () { U.sheet({ title: '입고 라벨 ' + d.locs.length + '장', html: labels, items: [], foot: '닫기' }); };
     $('#confirmBtn').onclick = function () {
-      var n = +$('input', cp).value;
-      U.busy('입고 확정 중', 'ERP 재고에 반영합니다', 700).then(function () { return U.busy('라벨 출력 중', 'BT 모바일 프린터, ' + n + '장', 900); }).then(function () {
+      U.busy('입고 확정 중', 'ERP 재고에 반영합니다', 700).then(function () {
         var done = S.get('inDone', {}); done[r.id] = (done[r.id] || 0) + d.qty; S.set('inDone', done); S.set('draft', null);
         $('#doneMain').hidden = true; $('#doneFoot').hidden = true; $('#doneResult').hidden = false;
-        $('#resDesc').textContent = r.name + ' ' + fmt(d.qty) + r.unit + '를 입고했고 라벨 ' + n + '장을 출력했습니다.';
+        $('#resDesc').textContent = r.partner + ' · ' + r.name + ' ' + fmt(d.qty) + r.unit + '를 입고했습니다.';
         window.PdaScan.beep(true);
       });
     };

@@ -266,3 +266,4 @@
 .task .item__body{min-width:0}
 .task .meta{flex-wrap:nowrap}
 .task .meta > span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.result > .btn{flex:none;min-height:44px;padding:0 18px}

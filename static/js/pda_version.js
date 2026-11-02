@@ -1,2 +1,2 @@
 /* 자동 생성 파일 · 직접 수정하지 마세요 */
-window.PDA_VERSION = { version: '1.0.28', build: '2026-11-02 16:54' };
+window.PDA_VERSION = { version: '1.0.29', build: '2026-11-02 16:59' };

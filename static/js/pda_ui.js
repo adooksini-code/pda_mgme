@@ -131,7 +131,7 @@
     { file: 'home.html', title: '통합 스캔 홈', group: '공통' },
     { file: 'inbound_list.html', title: '입고 대기', group: '입고' },
     { file: 'inbound_reg.html', title: '입고 등록', group: '입고' },
-    { file: 'inbound_done.html', title: '입고 확정 · 라벨 출력', group: '입고' },
+    { file: 'inbound_done.html', title: '입고 확정', group: '입고' },
     { file: 'outbound_picking.html', title: '출고 · 피킹리스트', group: '출고' },
     { file: 'outbound_group.html', title: '피킹리스트 출고', group: '출고' },
     { file: 'outbound_check.html', title: '출고 확인 · 상차', group: '출고' },
