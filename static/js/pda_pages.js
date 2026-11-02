@@ -294,8 +294,11 @@
     function showResult(already) {
       $('#ocMain').hidden = true; $('#ocFoot').hidden = true; $('#ocResult').hidden = false; $('#ocResultFoot').hidden = false;
       $('#resTitle').textContent = already ? '이미 출고 완료된 건입니다' : '출고 완료';
-      $('#resDesc').textContent = already ? o.customer + ' 건은 출고완료 상태입니다.' : o.customer + ' ' + boxes(o) + '박스를 ' + veh.plate + '에 상차했습니다.';
-      $('#resKv').innerHTML = [[isPk ? '피킹리스트' : '거래명세표', code], ['배송차량', veh.plate], ['ERP 진행상태', '출고완료']].map(function (k) { return '<div class="kv__row"><dt>' + k[0] + '</dt><dd>' + esc(k[1]) + '</dd></div>'; }).join('');
+      var real = (typeof qty !== 'undefined' && qty) || S.get('outQty', {})[o.ts] || o.items.map(function (it) { return it.box; });
+      var tot = real.reduce(function (a, b) { return a + b; }, 0);
+      $('#resDesc').textContent = already ? o.customer + ' 건은 출고완료 상태입니다.' : o.customer + ' ' + fmt(tot) + '박스를 ' + veh.plate + '에 상차했습니다.';
+      var diffRows = o.items.map(function (it, i) { return real[i] !== it.box ? [it.name, it.box + ' → ' + real[i] + '박스'] : null; }).filter(Boolean);
+      $('#resKv').innerHTML = [[isPk ? '피킹리스트' : '거래명세표', code], ['배송차량', veh.plate]].concat(diffRows).concat([['ERP 진행상태', diffRows.length ? '출고완료 (수량 변경 ' + diffRows.length + '건)' : '출고완료']]).map(function (k) { return '<div class="kv__row"><dt>' + k[0] + '</dt><dd>' + esc(k[1]) + '</dd></div>'; }).join('');
       $('#printLink').href = 'print.html?doc=ts&code=' + encodeURIComponent(o.ts);
     }
     if (o.status === '출고완료') { showResult(true); return; }
@@ -308,12 +311,31 @@
       U.sheet({ title: '배송차량 변경', items: D.vehicles.map(function (v) { return { label: v.plate, sub: v.driver + ', ' + v.car, icon: 'truck', value: v, current: v.plate === veh.plate }; }) })
         .then(function (v) { if (v && v.plate) { veh = v; renderVeh(); U.toast('배송차량을 ' + v.plate + '로 바꿨습니다', 'ok'); } });
     };
+    // 실제 출고수량 (기본은 예정 수량 · 바코드를 찍거나 품목을 누르면 고칠 수 있음)
+    var qty = o.items.map(function (it) { return it.box; }), open = -1;
     $('#itemList').innerHTML = o.items.map(function (it, i) {
-      return '<button type="button" class="item" data-i="' + i + '" aria-pressed="false"><span class="check">' + icon('check') + '</span>' +
+      return '<div class="oitem" data-i="' + i + '">' +
+        '<button type="button" class="item oitem__head" data-toggle="' + i + '" aria-pressed="false"><span class="check">' + icon('check') + '</span>' +
         '<span class="item__body"><span class="item__title"><span>' + esc(it.name) + '</span></span>' +
         '<span class="item__sub">소비기한 ' + esc(it.exp) + '</span>' + fifoHtml(it.lots, '박스') + '</span>' +
-        '<span class="item__end num">' + it.box + '<small>박스</small></span></button>';
+        '<span class="item__end num"><span data-q="' + i + '">' + it.box + '</span><small>박스</small><em class="oitem__plan" data-plan="' + i + '" hidden></em></span></button>' +
+        '<div class="oitem__qty" data-edit="' + i + '" hidden><span class="oitem__label">출고수량</span>' +
+        '<div class="stepper stepper--s" data-stepper data-qi="' + i + '"><button type="button" class="stepper__btn" data-step="-1" aria-label="줄이기">' + icon('minus', 'ic--s') + '</button>' +
+        '<input class="stepper__input" type="number" inputmode="numeric" min="0" max="' + (it.box * 3) + '" value="' + it.box + '" aria-label="' + esc(it.name) + ' 출고수량">' +
+        '<button type="button" class="stepper__btn" data-step="1" aria-label="늘리기">' + icon('plus', 'ic--s') + '</button></div></div></div>';
     }).join('');
+    U.initSteppers($('#itemList'));
+    function showQty(i) {
+      var it = o.items[i], d = qty[i] - it.box, p = $('[data-plan="' + i + '"]');
+      $('[data-q="' + i + '"]').textContent = qty[i];
+      p.hidden = !d; p.innerHTML = d ? '예정 ' + it.box + '<br>' + (d < 0 ? '부족 ' + (-d) : '초과 ' + d) : '';
+      p.className = 'oitem__plan' + (d < 0 ? ' is-minus' : ' is-plus');
+    }
+    function openEdit(i) {
+      open = i;
+      $$('[data-edit]').forEach(function (e) { e.hidden = +e.getAttribute('data-edit') !== i; });
+    }
+    $('#itemList').addEventListener('stepchange', function (e) { var st = e.target.closest('[data-qi]'); if (!st) return; var i = +st.getAttribute('data-qi'); qty[i] = e.detail.value; showQty(i); });
     function upd() {
       var n = Object.keys(checked).filter(function (k) { return checked[k]; }).length, t = o.items.length;
       $('#itemCount').innerHTML = '<b>' + n + '</b> / ' + t;
@@ -321,14 +343,20 @@
       $('#doneBtn').textContent = n < t ? '품목을 모두 확인하세요' : '출고 완료';
     }
     function setItem(i, v) {
-      checked[i] = v; var b = $('#itemList [data-i="' + i + '"]');
+      checked[i] = v; var b = $('#itemList [data-toggle="' + i + '"]');
       b.classList.toggle('is-checked', v); b.setAttribute('aria-pressed', v ? 'true' : 'false'); upd();
     }
-    $('#itemList').addEventListener('click', function (e) { var b = e.target.closest('[data-i]'); if (b) setItem(+b.getAttribute('data-i'), !checked[+b.getAttribute('data-i')]); });
+    // 품목을 누르면 : 확인 + 출고수량 칸 열기 (열린 품목을 다시 누르면 확인 해제)
+    $('#itemList').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-toggle]'); if (!b) return;
+      var i = +b.getAttribute('data-toggle');
+      if (checked[i] && open === i) { setItem(i, false); openEdit(-1); } else { setItem(i, true); openEdit(i); }
+    });
     $('#allBtn').onclick = function () { o.items.forEach(function (_, i) { setItem(i, true); }); };
     $('#doneBtn').onclick = function () {
       U.busy('출고 처리 중', 'ERP 진행상태를 출고완료로 바꿉니다', 900).then(function () {
         var done = S.get('outDone', []); if (done.indexOf(o.ts) < 0) done.push(o.ts); S.set('outDone', done);
+        var oq = S.get('outQty', {}); oq[o.ts] = qty.slice(); S.set('outQty', oq);
         window.PdaScan.beep(true); showResult(false);
       });
     };
@@ -336,10 +364,10 @@
     window.PdaPage = { onScan: function (c, ctx) {
       if ($('#ocMain').hidden) return false;
       for (var i = 0; i < o.items.length; i++) if (o.items[i].ean === c) {
-        window.PdaScan.beep(true); setItem(i, true);
+        window.PdaScan.beep(true); setItem(i, true); openEdit(i);
         var b = $('#itemList [data-i="' + i + '"]'); b.classList.add('is-flash'); b.scrollIntoView({ block: 'nearest' });
         setTimeout(function () { b.classList.remove('is-flash'); }, 700);
-        U.toast(o.items[i].name + ' 확인', 'ok'); return true;
+        U.toast(o.items[i].name + ' · 출고수량을 확인하세요', 'ok'); return true;
       }
       if (ctx === 'item') { window.PdaScan.beep(false); U.toast('이 건에 없는 품목입니다: ' + c, 'err'); return true; }
       return false;

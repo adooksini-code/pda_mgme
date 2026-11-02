@@ -230,3 +230,11 @@
 
 /* 피킹리스트 출고 : 완료된 거래처는 흐리게 */
 .item.is-done .item__title,.item.is-done .item__foot{color:var(--c-ink-3)}
+
+/* ---------- 출고 확인 : 품목별 출고수량 ---------- */
+.oitem + .oitem{border-top:1px solid var(--c-line)}
+.oitem.is-flash,.oitem.is-flash .item{background:var(--c-mint)}
+.oitem__qty{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 14px 12px 50px;background:var(--c-surface)}
+.oitem__label{font-size:14px;font-weight:700;color:var(--c-ink-2)}
+.oitem__qty .stepper{width:168px}
+.oitem__plan{display:block;font-style:normal;font-size:11px;font-weight:700;margin-top:2px;white-space:nowrap}
