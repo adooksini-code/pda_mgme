@@ -267,3 +267,6 @@
 .task .meta{flex-wrap:nowrap}
 .task .meta > span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .result > .btn{flex:none;min-height:44px;padding:0 18px}
+
+/* 출고 품목 : 업체명 강조 */
+.item__corp{display:inline-flex;align-self:flex-start;align-items:center;height:22px;padding:0 8px;margin-bottom:4px;border-radius:11px;background:var(--c-brand);color:#fff;font-size:12px;font-weight:700}

@@ -72,6 +72,12 @@
 
   /* 선입선출 : LOT(생산일 YYMMDD) 오래된 순으로 정렬 */
   function byLot(a, b) { return String(a.lot).localeCompare(String(b.lot)); }
+  // 품목을 내주는 업체 (LOT 보관처 기준)
+  function corpOf(it) {
+    var names = [];
+    (it.lots || []).forEach(function (l) { var n = /홀딩스/.test(l.wh) ? '샘플홀딩스' : l.wh.replace(/\s.*$/, ''); if (names.indexOf(n) < 0) names.push(n); });
+    return names.join(' · ') || '-';
+  }
   function fifoHtml(lots, unit) {
     if (!lots || !lots.length) return '';
     return '<span class="fifo">' + lots.slice().sort(byLot).map(function (l, i) {
@@ -165,7 +171,7 @@
     if (!r) { $('#regMain').hidden = true; $('#regEmpty').hidden = false; return; }
     var max = remain(r);
     var st = { qty: max, lot: '', status: '입고완료', locs: [{ name: D.warehouses[0], qty: max }] };
-    var draft = S.get('draft'); if (draft && draft.id === r.id) { st.qty = draft.qty; st.lot = draft.lot; st.locs = draft.locs; st.status = draft.status; }
+    var draft = S.get('draft'); if (draft && draft.id === r.id) { st.qty = draft.qty; st.lot = draft.lot; st.locs = draft.locs; st.status = draft.status; st.qc = draft.qc; st.qcMemo = draft.qcMemo; }
 
     $('#hdTitle').textContent = r.menu + ' 등록';
     $('#sumHead').innerHTML = '<span class="tag">' + esc(r.cat) + '</span><span>' + esc(r.name) + (r.spec ? ' · ' + esc(r.spec) : '') + '</span>';
@@ -221,10 +227,26 @@
         .then(function (w) { if (!w) return; st.locs.push({ name: w, qty: Math.max(0, st.qty - sum()) }); renderLocs(); U.toast(w + ' 위치를 추가했습니다'); });
     };
     $('#statusTabs').addEventListener('tabchange', function (e) { st.status = e.detail.value; check(); });
+
+    // 간이 품목검사 : 기본은 모두 양호, 이상이 있을 때만 불량
+    var QC = ['포장 상태', '표기 · 라벨', '이물 · 오염'];
+    st.qc = st.qc || QC.map(function () { return 'ok'; }); st.qcMemo = st.qcMemo || '';
+    $('#qcList').innerHTML = QC.map(function (n, i) {
+      return '<div class="item"><span class="item__body"><span class="item__title"><span>' + n + '</span></span></span>' +
+        '<div class="judge" role="radiogroup" aria-label="' + n + '" data-qc="' + i + '">' +
+        '<button type="button" class="judge__btn" role="radio" data-v="ok">양호</button><button type="button" class="judge__btn" role="radio" data-v="ng">불량</button></div></div>';
+    }).join('');
+    function renderQc() {
+      $$('[data-qc]').forEach(function (g) { var i = +g.getAttribute('data-qc'); $$('.judge__btn', g).forEach(function (b) { b.setAttribute('aria-checked', b.getAttribute('data-v') === st.qc[i] ? 'true' : 'false'); }); });
+      $('#qcMemoBox').hidden = st.qc.indexOf('ng') < 0;
+    }
+    $('#qcList').addEventListener('click', function (e) { var b = e.target.closest('.judge__btn'); if (!b) return; st.qc[+b.parentNode.getAttribute('data-qc')] = b.getAttribute('data-v'); renderQc(); });
+    $('#qcMemo').value = st.qcMemo; $('#qcMemo').addEventListener('input', function () { st.qcMemo = this.value; });
+    renderQc();
     U.selectTab($('#statusTabs'), st.status); renderLocs();
 
     $('#nextBtn').onclick = function () {
-      S.set('draft', { id: r.id, qty: st.qty, lot: st.lot, locs: st.locs, status: st.status });
+      S.set('draft', { id: r.id, qty: st.qty, lot: st.lot, locs: st.locs, status: st.status, qc: st.qc, qcMemo: st.qcMemo });
       if (st.status === '반품') { U.busy('반품 등록 중', null, 700).then(function () { S.set('draft', null); U.go('inbound_list.html', r.name + ' ' + st.qty + r.unit + ' 반품을 등록했습니다'); }); return; }
       U.busy('저장 중', null, 350).then(function () { location.href = 'inbound_done.html'; });
     };
@@ -254,7 +276,9 @@
     $('#hdTitle').textContent = r.menu + ' 확정';
     $('#sumHead').innerHTML = '<span class="tag">' + esc(r.cat) + '</span><span>' + esc(r.name) + (r.spec ? ' · ' + esc(r.spec) : '') + '</span>';
     $('#sumTitle').textContent = r.partner;   // 거래처를 크게
-    $('#doneKv').innerHTML = [['입고번호', inNo], ['발주일', r.orderDate || '-'], ['입고수량', fmt(d.qty) + r.unit]]
+    var QCN = ['포장 상태', '표기 · 라벨', '이물 · 오염'], bad = (d.qc || []).map(function (v, i) { return v === 'ng' ? QCN[i] : null; }).filter(Boolean);
+    var qcText = bad.length ? '불량 · ' + bad.join(', ') + (d.qcMemo ? ' (' + d.qcMemo + ')' : '') : '양호';
+    $('#doneKv').innerHTML = [['입고번호', inNo], ['발주일', r.orderDate || '-'], ['입고수량', fmt(d.qty) + r.unit], ['간이 검사', qcText]]
       .map(function (k) { return '<div class="kv__row"><dt>' + k[0] + '</dt><dd class="num">' + esc(k[1]) + '</dd></div>'; }).join('');
     $('#doneLocs').innerHTML = d.locs.map(function (l) { return '<div class="item"><span class="item__lead">' + icon('pin') + '</span><span class="item__body"><span class="item__title"><span>' + esc(l.name) + '</span></span></span><span class="item__end num">' + fmt(l.qty) + r.unit + '</span></div>'; }).join('');
     // 입고 라벨 : 출력하지 않고, 필요할 때 [입고 라벨 보기]로 확인 (적재 위치마다 1장)
@@ -337,7 +361,7 @@
     $('#itemList').innerHTML = o.items.map(function (it, i) {
       return '<div class="oitem" data-i="' + i + '">' +
         '<button type="button" class="item oitem__head" data-toggle="' + i + '" aria-pressed="false"><span class="check">' + icon('check') + '</span>' +
-        '<span class="item__body"><span class="item__title"><span>' + esc(it.name) + '</span></span>' +
+        '<span class="item__body"><span class="item__corp">' + esc(corpOf(it)) + '</span><span class="item__title"><span>' + esc(it.name) + '</span></span>' +
         '<span class="item__sub">소비기한 ' + esc(it.exp) + '</span>' + fifoHtml(it.lots, '박스') + '</span>' +
         '<span class="item__end num"><span data-q="' + i + '">' + it.box + '</span><small>박스</small><em class="oitem__plan" data-plan="' + i + '" hidden></em></span></button>' +
         '<div class="oitem__qty" data-edit="' + i + '" hidden><span class="oitem__label">출고수량</span>' +
